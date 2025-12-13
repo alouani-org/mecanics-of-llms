@@ -156,18 +156,29 @@ Sois concis et actionnel."""
 
         # Extraire le nom de l'outil et les paramètres
         try:
+            # Gestion robuste des parenthèses
+            if "(" not in action or ")" not in action:
+                return f"❌ Format d'action invalide: {action}"
+            
             tool_name = action.split("(")[0].strip()
-            params_str = action.split("(")[1].rstrip(")")
+            params_str = action.split("(")[1].rsplit(")", 1)[0]
 
             if tool_name not in self.tools:
                 return f"❌ Outil inconnu: {tool_name}"
 
             # Parser les paramètres (format: key=value, key=value)
+            # Gestion améliorée des guillemets et échappements
             params = {}
             for param in params_str.split(","):
                 if "=" in param:
                     key, val = param.split("=", 1)
-                    params[key.strip()] = val.strip().strip("'\"")
+                    key = key.strip()
+                    val = val.strip()
+                    # Supprimer guillemets simples ET doubles
+                    if (val.startswith('"') and val.endswith('"')) or \
+                       (val.startswith("'") and val.endswith("'")):
+                        val = val[1:-1]
+                    params[key] = val
 
             # Exécuter l'outil
             tool = self.tools[tool_name]

@@ -61,7 +61,12 @@ def main():
     print("=" * 70 + "\n")
 
     print("Formule: Pass^k = p^k")
-    print("         où p = taux de succès unitaire\n")
+    print("         où p = taux de succès unitaire")
+    print("\n⚠️  CLARIFICATION:")
+    print("  Pass^k est PLUS DIFFICILE que Pass@k (courbe descendante)")
+    print("  • Pass@k: 'j'ai besoin que AU MOINS 1 réussisse'")
+    print("  • Pass^k:  'j'ai besoin que TOUS les k réussissent'")
+    print("\n  Cas d'usage: Systèmes critiques où AUCUNE erreur n'est acceptable.\n")
 
     # Diviser les 100 tentatives en groupes de k
     for k in [1, 3, 5, 10]:

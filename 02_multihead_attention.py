@@ -31,6 +31,10 @@ def main():
     print("MULTI-HEAD ATTENTION (SIMULATION SIMPLIFIÉE)")
     print("=" * 60 + "\n")
 
+    # Exemple concret avec noms de tokens
+    token_names = ["Le", "chat", "dort", "bien"]
+    print(f"Phrase d'exemple: {' '.join(token_names)}\n")
+
     # Créer une séquence d'embeddings (simulée)
     # En pratique, ce sont les sorties des couches précédentes
     x = torch.randn(batch_size, seq_len, d_model)
@@ -88,9 +92,15 @@ def main():
 
     print("\n💡 INTUITION:")
     print("  • Chaque tête capture DIFFÉRENTES dépendances dans la phrase.")
-    print("  • Tête 0 peut se concentrer sur 'Le → chat' (sujet-verbe).")
-    print("  • Tête 1 peut se concentrer sur 'chat → dort' (verbe-adverbe).")
+    print(f"  • Avec nos tokens {token_names}:")
+    print("    - Tête 0 peut se concentrer sur 'Le → chat' (sujet-verbe).")
+    print("    - Tête 1 peut se concentrer sur 'chat → dort' (verbe-adverbe).")
     print("  • La fusion permet au modèle de combiner ces perspectives.")
+    print(f"\n  Observation: Chaque tête assigne des poids d'attention différents.")
+    print(f"  Exemple avec {token_names[1]} (token 1):")
+    print(f"    - Tête 0: 'chat' regarde surtout vers 'Le' et 'dort'")
+    print(f"    - Tête 1: 'chat' regarde plus vers 'bien'")
+    print(f"  → Perspectives complémentaires = représentation riche!")
 
 
 if __name__ == "__main__":

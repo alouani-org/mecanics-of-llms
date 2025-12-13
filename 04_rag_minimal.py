@@ -49,8 +49,14 @@ def main():
     all_texts = documents + [question]
 
     # TF-IDF : transformer les textes en vecteurs
+    # Stop words français courants (amélioration de la qualité)
+    french_stop_words = [
+        "le", "la", "de", "du", "et", "les", "un", "une", "des",
+        "est", "être", "en", "à", "au", "par", "pour", "ce", "cette",
+        "cet", "qui", "que", "quoi", "dont", "donc", "mais", "ou", "où"
+    ]
     vectorizer = TfidfVectorizer(
-        lowercase=True, stop_words=["le", "la", "de", "du", "et", "les"]
+        lowercase=True, stop_words=french_stop_words
     )
     tfidf_matrix = vectorizer.fit_transform(all_texts)
 

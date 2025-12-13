@@ -515,7 +515,7 @@ def main():
     
     # Évaluer le retrieval de la première requête
     first_result = results[0]
-    retrieved_docs = [d["id"] for d in first_result["retrieved_docs"]]
+    retrieved_doc_ids = [d["id"] for d in first_result["retrieved_docs"]]
     
     # Supposer que les docs "pertinents" sont tous ceux contenant "Transformer"
     expected_docs = [
@@ -523,9 +523,15 @@ def main():
         if "transformer" in d.content.lower()
     ]
     
+    # Créer des objets SimpleDocument avec les ID corrects
+    retrieved_docs_objects = [
+        documents[i] for i, d in enumerate(documents) 
+        if d.id in retrieved_doc_ids
+    ]
+    
     retrieval_eval = evaluator.evaluate_retrieval(
         questions[0],
-        [SimpleDocument("", {"id": d}) for d in retrieved_docs],
+        retrieved_docs_objects,
         expected_docs
     )
     
