@@ -13,6 +13,7 @@ Ce dossier regroupe des **micro-scripts Python exécutables** permettant aux ing
 | 5 | `05_pass_at_k_evaluation.py` | 12 | Pass@k, Pass^k, évaluation de modèles |
 | 🎁 **BONUS 1** | `06_react_agent_bonus.py` | 13, 14 | **Agents ReAct, framework générique, tool registration** |
 | 🎁 **BONUS 2** | `07_llamaindex_rag_advanced.py` | 13 | **RAG avancé, document indexing, chat persistant** |
+| 🎁 **BONUS 3** | `08_lora_finetuning_example.py` | 9 | **LoRA, QLoRA, comparaison fine-tuning, cas réel SNCF** |
 
 ## 🚀 Démarrage Rapide
 
@@ -46,6 +47,9 @@ python 02_multihead_attention.py
 python 03_temperature_softmax.py
 python 04_rag_minimal.py
 python 05_pass_at_k_evaluation.py
+python 06_react_agent_bonus.py
+python 07_llamaindex_rag_advanced.py
+python 08_lora_finetuning_example.py
 ```
 
 ## 📖 Détails par Script
@@ -372,6 +376,52 @@ Voir `LLAMAINDEX_GUIDE.md` pour :
 
 ---
 
+### Script 8 : LoRA & QLoRA Fine-tuning (Chapitre 9) 🎁 BONUS 3
+
+**Voir:** `09-affinage-supervise-sft.md`
+
+Démontre les techniques de fine-tuning efficace en ressources :
+- LoRA (Low-Rank Adaptation) : réduction des paramètres entraînables.
+- QLoRA (Quantized LoRA) : quantification + LoRA pour VRAM ultra-faible.
+- Comparaison chiffrée : Full Fine-tuning vs LoRA vs QLoRA.
+- Cas réel : adaptation d'un modèle LLaMA-7B pour le domaine ferroviaire (SNCF).
+
+```bash
+python 08_lora_finetuning_example.py
+```
+
+**Exemple de sortie:**
+```
+=== LoRA Calculations ===
+LLaMA-7B (7B params total)
+  LoRA Rank 64:
+    Trainable params (A+B): 85,262,336 (1.22% of model)
+    Reduction: 81.7×
+
+=== Fine-tuning Method Comparison ===
+Method          | VRAM Needed | Time (10K ex) | Checkpoint | Use Case
+Full FT         | 28 GB       | 8h            | 26 GB      | Unlimited budget
+LoRA            | 8 GB        | 2.5h          | 85 MB      | Multi-domain, quick
+QLoRA           | 2 GB        | 3h            | 85 MB      | Single GPU edge
+
+=== Real Case: SNCF Railway Adapter ===
+Scenario: Adapt LLaMA-7B for railway maintenance (10K domain Q&A)
+Hardware: RTX 4090 (24GB VRAM)
+
+Full Fine-tuning:  Need 28GB → IMPOSSIBLE on RTX 4090
+LoRA:              Need 8GB  → ✅ Feasible, 2.5h training
+QLoRA:             Need 2GB  → ✅ Feasible, 3h training, leaves GPU RAM free
+```
+
+Concepts abordés :
+- W = W₀ + BA (décomposition LoRA)
+- Effet du rank (8, 16, 32, 64) sur taille vs performance
+- Quantisation 8-bit et économies de mémoire
+- Peft library integration (transformers + peft)
+- Pseudo-code pour adapter modèles multilingues
+
+---
+
 ## 📚 Correspondance Livre ↔ Scripts
 
 | Chapitre | Topic | Script |
@@ -379,6 +429,7 @@ Voir `LLAMAINDEX_GUIDE.md` pour :
 | 2 | Tokenisation, Embeddings | `01_tokenization_embeddings.py` |
 | 3 | Architecture Transformer, Attention | `02_multihead_attention.py` |
 | 7 | Pré-entraînement, Loss | `03_temperature_softmax.py` |
+| 9 | Affinage supervisé, LoRA, QLoRA | **`08_lora_finetuning_example.py`** |
 | 11 | Stratégies de génération, Température | `03_temperature_softmax.py` |
 | 12 | Modèles de raisonnement, Évaluation | `05_pass_at_k_evaluation.py` |
 | 13 | Systèmes augmentés, RAG, Agents | `04_rag_minimal.py`, **`06_react_agent_bonus.py`**, **`07_llamaindex_rag_advanced.py`** |
