@@ -1,8 +1,10 @@
 # Scripts Pratiques : Expérimenter les Concepts LLM
 
+🌍 **[English Version](#english-version)** | 📖 **Français**
+
 Collection de **9 scripts Python exécutables** (+ documentation) pour expérimenter les concepts clés présentés dans le livre **"La Mécanique des LLM"**.
 
-> 📚 **À propos** : Ces scripts accompagnent les chapitres du livre. Voir [Correspondance Livre ↔ Scripts](#-correspondance-livre--scripts) pour les liens détaillés.
+> 📚 **À propos** : Ces scripts accompagnent les chapitres du livre. Voir [Correspondance Livre ↔ Scripts](docs/fr/PEDAGOGICAL_JOURNEY.md) pour les liens détaillés.
 
 **📕 Acheter le livre :**
 - **Broché** : [Amazon](https://amzn.eu/d/3oREERI)
