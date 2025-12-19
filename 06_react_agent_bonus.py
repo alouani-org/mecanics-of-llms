@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-Script BONUS : Agent Autonome (Pattern ReAct)
+Script BONUS 1 : Agent Autonome - Pattern ReAct (Chapitres 13 & 14)
 
 Ce script implémente un mini-framework générique pour construire des agents
 autonomes capables de :
@@ -15,10 +15,13 @@ Un agent ReAct est plus sophistiqué qu'un simple appel de fonction :
 - Il peut itérer et affiner sa réponse
 
 Dépendances :
-    pip install pydantic
+    Aucune (utilise uniquement la bibliothèque standard Python)
 
 Utilisation :
     python 06_react_agent_bonus.py
+
+Note : Ce script utilise un LLM SIMULÉ (heuristiques basiques).
+      Pour intégrer un vrai LLM, voir REACT_AGENT_INTEGRATION.md
 """
 
 from typing import Callable, Dict, Any, Optional

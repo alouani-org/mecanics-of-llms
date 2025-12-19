@@ -1,11 +1,13 @@
 #!/usr/bin/env python
 """
-Script 1 : Tokenisation et impact sur la longueur des séquences.
+Script 1 : Tokenisation et impact sur la longueur des séquences (Chapitre 2).
 
 Ce script illustre :
 - Comment les tokenizers (BPE, WordPiece) fragmentent le texte.
-- L'impact du nombre de tokens sur le coût computationnel.
+- L'impact du nombre de tokens sur le coût computationnel (O(n²) pour l'attention).
 - Comment des langues différentes ont des ratios différents.
+
+Note : Utilise GPT-2 comme fallback si LLaMA n'est pas accessible.
 
 Dépendances :
     pip install transformers torch

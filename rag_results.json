@@ -1,0 +1,78 @@
+{
+  "timestamp": "2025-12-17T17:56:50.119266",
+  "queries": [
+    {
+      "question": "Qu'est-ce qu'un Transformer?",
+      "retrieved_docs": [
+        {
+          "title": "Transformers : Architecture",
+          "id": "ce387018",
+          "snippet": "\nLe Transformer est une architecture de réseau profond basée sur le mécanisme \nd'attention. Contrair..."
+        },
+        {
+          "title": "Attention Multi-Tête",
+          "id": "f84062ee",
+          "snippet": "\nL'attention multi-tête permet au modèle d'observer différentes représentations\nd'ordre supérieur du..."
+        }
+      ],
+      "answer": "\nD'après le contexte fourni, les Transformers sont des architectures basées\nsur l'attention qui traitent tous les tokens en parallèle, contrairement aux RNNs.\n\nLes points clés:\n1. Multi-Head Attention: Capture différentes relations (syntaxe, sémantique, position)\n2. Parallélisation: O(n²) en tokens mais traitement plus rapide\n3. Positional Encoding: Ajoute l'information de séquence\n\nL'architecture originale (Vaswani et al., 2017) comprend:\n- Encoder (comprendre le contexte)\n- Decoder (générer la réponse)\n- Attention multi-tête (8 têtes par défaut)\n\nApplication: Tous les LLMs modernes (GPT, Claude, Llama) utilisent cette architecture.\n",
+      "timestamp": "2025-12-17T17:56:50.107004"
+    },
+    {
+      "question": "Comment fonctionne l'attention multi-tête?",
+      "retrieved_docs": [
+        {
+          "title": "Transformers : Architecture",
+          "id": "ce387018",
+          "snippet": "\nLe Transformer est une architecture de réseau profond basée sur le mécanisme \nd'attention. Contrair..."
+        },
+        {
+          "title": "Fine-tuning et Adaptation",
+          "id": "30b7bd04",
+          "snippet": "\nFine-tuning = adapter un modèle pré-entraîné à une tâche spécifique.\n\nStratégies:\n1. Full Fine-tuni..."
+        }
+      ],
+      "answer": "\nD'après le contexte fourni, les Transformers sont des architectures basées\nsur l'attention qui traitent tous les tokens en parallèle, contrairement aux RNNs.\n\nLes points clés:\n1. Multi-Head Attention: Capture différentes relations (syntaxe, sémantique, position)\n2. Parallélisation: O(n²) en tokens mais traitement plus rapide\n3. Positional Encoding: Ajoute l'information de séquence\n\nL'architecture originale (Vaswani et al., 2017) comprend:\n- Encoder (comprendre le contexte)\n- Decoder (générer la réponse)\n- Attention multi-tête (8 têtes par défaut)\n\nApplication: Tous les LLMs modernes (GPT, Claude, Llama) utilisent cette architecture.\n",
+      "timestamp": "2025-12-17T17:56:50.108986"
+    },
+    {
+      "question": "Quelle est la différence entre LoRA et fine-tuning complet?",
+      "retrieved_docs": [
+        {
+          "title": "Attention Multi-Tête",
+          "id": "f84062ee",
+          "snippet": "\nL'attention multi-tête permet au modèle d'observer différentes représentations\nd'ordre supérieur du..."
+        },
+        {
+          "title": "Fine-tuning et Adaptation",
+          "id": "30b7bd04",
+          "snippet": "\nFine-tuning = adapter un modèle pré-entraîné à une tâche spécifique.\n\nStratégies:\n1. Full Fine-tuni..."
+        }
+      ],
+      "answer": "\nLe fine-tuning adapte un modèle pré-entraîné à une tâche spécifique.\n\nStratégies recommandées:\n- LoRA: Ajout de matrices de petit rang (économe en mémoire)\n- QLoRA: LoRA sur modèles quantifiés (4-bit, ~2GB pour 7B model)\n- Full fine-tuning: Si dataset très grand et ressources disponibles\n\nExemple: LoRA sur Llama-2 7B:\n- Paramètres supplémentaires: ~8M (0.1% du modèle)\n- Mémoire nécessaire: ~10GB (vs 28GB en full fine-tuning)\n- Temps: 1-2h sur GPU A100\n\nBest practice par dataset:\n- <10K examples: LoRA\n- 10K-100K: LoRA + lr 5e-4\n- >100K: Full fine-tuning\n",
+      "timestamp": "2025-12-17T17:56:50.110714"
+    }
+  ],
+  "chat_history": [
+    {
+      "question": "Parle-moi des Transformers",
+      "answer": "\nD'après le contexte fourni, les Transformers sont des architectures basées\nsur l'attention qui traitent tous les tokens en parallèle, contrairement aux RNNs.\n\nLes points clés:\n1. Multi-Head Attention: Capture différentes relations (syntaxe, sémantique, position)\n2. Parallélisation: O(n²) en tokens mais traitement plus rapide\n3. Positional Encoding: Ajoute l'information de séquence\n\nL'architecture originale (Vaswani et al., 2017) comprend:\n- Encoder (comprendre le contexte)\n- Decoder (générer la réponse)\n- Attention multi-tête (8 têtes par défaut)\n\nApplication: Tous les LLMs modernes (GPT, Claude, Llama) utilisent cette architecture.\n",
+      "timestamp": "2025-12-17T17:56:50.112536"
+    },
+    {
+      "question": "Et comment ça marche en pratique?",
+      "answer": "\nD'après le contexte fourni, les Transformers sont des architectures basées\nsur l'attention qui traitent tous les tokens en parallèle, contrairement aux RNNs.\n\nLes points clés:\n1. Multi-Head Attention: Capture différentes relations (syntaxe, sémantique, position)\n2. Parallélisation: O(n²) en tokens mais traitement plus rapide\n3. Positional Encoding: Ajoute l'information de séquence\n\nL'architecture originale (Vaswani et al., 2017) comprend:\n- Encoder (comprendre le contexte)\n- Decoder (générer la réponse)\n- Attention multi-tête (8 têtes par défaut)\n\nApplication: Tous les LLMs modernes (GPT, Claude, Llama) utilisent cette architecture.\n",
+      "timestamp": "2025-12-17T17:56:50.114787"
+    },
+    {
+      "question": "Peux-tu comparer avec les RNNs?",
+      "answer": "\nD'après le contexte fourni, les Transformers sont des architectures basées\nsur l'attention qui traitent tous les tokens en parallèle, contrairement aux RNNs.\n\nLes points clés:\n1. Multi-Head Attention: Capture différentes relations (syntaxe, sémantique, position)\n2. Parallélisation: O(n²) en tokens mais traitement plus rapide\n3. Positional Encoding: Ajoute l'information de séquence\n\nL'architecture originale (Vaswani et al., 2017) comprend:\n- Encoder (comprendre le contexte)\n- Decoder (générer la réponse)\n- Attention multi-tête (8 têtes par défaut)\n\nApplication: Tous les LLMs modernes (GPT, Claude, Llama) utilisent cette architecture.\n",
+      "timestamp": "2025-12-17T17:56:50.116378"
+    }
+  ],
+  "statistics": {
+    "total_queries": 3,
+    "total_turns": 3,
+    "documents_indexed": 3
+  }
+}

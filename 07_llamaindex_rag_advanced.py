@@ -1,22 +1,30 @@
 """
-07_llamaindex_rag_advanced.py - Framework LlamaIndex pour RAG Avancé
+Script BONUS 2 : Framework LlamaIndex pour RAG Avancé (Chapitre 13)
 
-Démontre comment construire un système RAG complet avec LlamaIndex :
-- Chargement et parsing de documents
-- Indexation et embedding
-- Retrieval avancé (BM25, Hybrid Search)
-- Query Engine avec résumé et raisonnement
-- Chat avec persistance de contexte
-- Évaluation de qualité
+Démontre comment construire un système RAG complet :
+- Chargement et parsing de documents (embarqués dans le script)
+- Indexation et embedding (simulés, déterministes)
+- Retrieval par similarité cosinus
+- Query Engine avec augmentation de contexte
+- Chat avec persistance de contexte (mémoire conversationnelle)
+- Évaluation de qualité (Precision, Recall, F1)
+- Export des résultats en JSON
 
-Installation:
-    pip install llama-index openai langchain python-dotenv
+Mode standalone (aucune dépendance requise):
+    python 07_llamaindex_rag_advanced.py
+    → Utilise des embeddings simulés (déterministes)
 
-Concepts couverts (Chapitre 13):
+Mode avancé (avec LlamaIndex réel):
+    pip install llama-index openai python-dotenv
+    python 07_llamaindex_rag_advanced.py
+    → Tente l'intégration LlamaIndex si disponible
+
+Concepts couverts :
     - RAG (Retrieval-Augmented Generation)
     - Document parsing et indexing
-    - Embedding et similarity search
-    - Chain-of-Thought pour augmentation
+    - Vector similarity search
+    - Query augmentation avec contexte
+    - Conversation avec mémoire
 """
 
 import os

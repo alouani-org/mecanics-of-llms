@@ -139,7 +139,7 @@ def main():
     print(f"   → Ne pas comparer directement!\n")
 
     print("🔴 Oublier que Pass^k diminue exponentiellement:")
-    print(f"   • Même un modèle à 90% d'accrecyon:")
+    print(f"   • Même un modèle à 90% d'accuracy:")
     print(f"     - Pass^1 = 90%")
     print(f"     - Pass^5 = 59%")
     print(f"     - Pass^10 = 35%")

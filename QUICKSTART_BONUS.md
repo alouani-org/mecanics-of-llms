@@ -6,7 +6,7 @@ Démonstration rapide des deux nouveaux bonus scripts. **Aucune installation req
 
 ## 1️⃣ ReAct Agent - Agent Autonome
 
-**Fichier:** `examples/06_react_agent_bonus.py` (380 lignes)  
+**Fichier:** `examples/06_react_agent_bonus.py` (395 lignes)  
 **Concept:** Agents autonomes avec pattern ReAct (Thought → Action → Observation)  
 **Chapitres:** 13, 14
 
@@ -20,29 +20,29 @@ python 06_react_agent_bonus.py
 ### Sortie attendue
 
 ```
-================================================================================
-🤖 ReAct Agent Demo
-================================================================================
+======================================================================
+AGENT AUTONOME - PATTERN REACT
+======================================================================
+✅ Outil enregistré: calculatrice
+✅ Outil enregistré: get_current_date
+✅ Outil enregistré: search_knowledge_base
 
-📋 Agents Registrés:
-  ✓ Calculator Agent
-  ✓ Tool-Based Agent
+######################################################################
+TÂCHE 3/3
+######################################################################
 
-💬 Task 1: Calcule 15 + 27, puis multiplie par 2
-[Iteration 1]
-  Thought: L'utilisateur me demande de calculer 15 + 27...
-  Action: calculator(a=15, b=27, operation=+)
-  Observation: 42
-  
-[Iteration 2]
-  Thought: J'ai maintenant 42, je dois le multiplier par 2...
-  Action: calculator(a=42, b=2, operation=*)
-  Observation: 84
+======================================================================
+🤖 AGENT: MonAgent
+📌 TÂCHE: Quel est le jour aujourd'hui?
+======================================================================
 
-✅ Final Answer: 84
-
-[2 itérations | 0.045 secondes]
+💭 Pensée: Je dois récupérer la date d'aujourd'hui.
+🔧 Action: get_current_date()
+📊 Résultat: ✅ get_current_date() → Date d'aujourd'hui: 17/12/2025
 ```
+
+⚠️ **Note:** Ce script utilise un LLM **simulé** avec des heuristiques basiques.
+Pour un comportement plus intelligent, connectez un vrai LLM (voir section intégration).
 
 ### Code Clé
 
@@ -91,7 +91,7 @@ agent = OpenAIAgent(model="gpt-4")
 
 ## 2️⃣ LlamaIndex RAG - Retrieval-Augmented Generation
 
-**Fichier:** `examples/07_llamaindex_rag_advanced.py` (380+ lignes)  
+**Fichier:** `examples/07_llamaindex_rag_advanced.py` (643 lignes)  
 **Concept:** Système RAG complet avec document indexing, chat persistant, évaluation  
 **Chapitres:** 13
 
@@ -110,41 +110,47 @@ python 07_llamaindex_rag_advanced.py
 ================================================================================
 
 📚 Phase 1: Chargement des documents
-────────────────────────────────────────────────────────────────────────────────
+--------------------------------------------------------------------------------
   ✓ Transformers : Architecture (675 chars)
   ✓ Attention Multi-Tête (571 chars)
   ✓ Fine-tuning et Adaptation (653 chars)
 
 🔍 Phase 2: Création de l'index vectoriel
-────────────────────────────────────────────────────────────────────────────────
+--------------------------------------------------------------------------------
   ✓ Index créé avec 3 documents
   ✓ Dimension embedding: 384
 
 💬 Phase 4: Requêtes RAG
-────────────────────────────────────────────────────────────────────────────────
+--------------------------------------------------------------------------------
 
 Q1: Qu'est-ce qu'un Transformer?
 📄 Documents retrievés:
-   - Transformers : Architecture (0f44208b)
-   - Attention Multi-Tête (90ba7a80)
+   - Transformers : Architecture (ce387018)
+   - Attention Multi-Tête (f84062ee)
 🤖 Réponse:
 D'après le contexte fourni, les Transformers sont des architectures basées
 sur l'attention qui traitent tous les tokens en parallèle...
 
 💬 Phase 5: Chat avec Mémoire
-────────────────────────────────────────────────────────────────────────────────
+--------------------------------------------------------------------------------
 
 👤 Utilisateur: Parle-moi des Transformers
 🤖 Bot: D'après le contexte...
+   📄 Tour 1
 
 📊 Phase 6: Évaluation de Qualité
-────────────────────────────────────────────────────────────────────────────────
-Évaluation du Retrieval:
-  - Precision@2: 66.67%
-  - Recall@2:    75.00%
-  - F1:          70.59%
+--------------------------------------------------------------------------------
+Évaluation du Retrieval (Q1):
+  - Precision@2: 50.00%
+  - Recall@2:    100.00%
+  - F1:          66.67%
 
 💾 Résultats exportés dans: rag_results.json
+
+🦙 Intégration LlamaIndex Réelle
+--------------------------------------------------------------------------------
+⚠️  LlamaIndex non installé
+Installation: pip install llama-index openai
 ```
 
 ### Code Clé

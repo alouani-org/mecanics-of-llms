@@ -1,19 +1,19 @@
 #!/usr/bin/env python
 """
-Script 8 : LoRA et QLoRA - Fine-tuning Efficace (Chapitre 9).
+Script BONUS 3 : LoRA et QLoRA - Fine-tuning Efficace (Chapitre 9)
 
-Ce script démontre comment utiliser LoRA (Low-Rank Adaptation) et QLoRA
-pour fine-tuner efficacement un modèle de langage sans avoir besoin de 
-ressources GPU immenses.
+Ce script démontre les techniques de fine-tuning efficace en ressources :
+- LoRA (Low-Rank Adaptation) : réduction drastique des paramètres entraînables
+- QLoRA (Quantized LoRA) : quantification 4-bit + LoRA pour VRAM ultra-faible
+- Comparaison chiffrée : Full Fine-tuning vs LoRA vs QLoRA
+- Cas d'usage réel : adaptation de LLaMA-7B/65B pour un domaine métier (SNCF)
 
-Concepts couverts :
-- LoRA : adaptateurs de petit rang au lieu de fine-tuning complet
-- QLoRA : LoRA sur modèles quantifiés 4-bit (révolution d'accessibilité)
-- Comparaison des ressources (VRAM, temps, paramètres)
-- Cas d'usage réel : adaptation à un domaine spécifique
+Ce script est CALCULATOIRE uniquement (pas de GPU requis) :
+- Il démontre les économies de ressources avec des calculs réels
+- Il affiche du pseudocode pour l'intégration avec peft/transformers
 
-Dépendances minimales (sans réel GPU requis pour la démo):
-    pip install torch numpy
+Dépendances minimales (mode démo):
+    Aucune (utilise uniquement la bibliothèque standard Python)
 
 Dépendances pour fine-tuning réel:
     pip install torch transformers peft bitsandbytes
