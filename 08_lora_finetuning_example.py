@@ -1,24 +1,24 @@
 #!/usr/bin/env python
 """
-Script BONUS 3 : LoRA et QLoRA - Fine-tuning Efficace (Chapitre 9)
+BONUS Script 3: LoRA and QLoRA - Efficient Fine-tuning (Chapter 9)
 
-Ce script démontre les techniques de fine-tuning efficace en ressources :
-- LoRA (Low-Rank Adaptation) : réduction drastique des paramètres entraînables
-- QLoRA (Quantized LoRA) : quantification 4-bit + LoRA pour VRAM ultra-faible
-- Comparaison chiffrée : Full Fine-tuning vs LoRA vs QLoRA
-- Cas d'usage réel : adaptation de LLaMA-7B/65B pour un domaine métier (SNCF)
+This script demonstrates resource-efficient fine-tuning techniques:
+- LoRA (Low-Rank Adaptation): drastic reduction of trainable parameters
+- QLoRA (Quantized LoRA): 4-bit quantization + LoRA for ultra-low VRAM
+- Numerical comparison: Full Fine-tuning vs LoRA vs QLoRA
+- Real use case: adapting LLaMA-7B/65B for a business domain (Railway)
 
-Ce script est CALCULATOIRE uniquement (pas de GPU requis) :
-- Il démontre les économies de ressources avec des calculs réels
-- Il affiche du pseudocode pour l'intégration avec peft/transformers
+This script is COMPUTATIONAL only (no GPU required):
+- It demonstrates resource savings with real calculations
+- It displays pseudocode for integration with peft/transformers
 
-Dépendances minimales (mode démo):
-    Aucune (utilise uniquement la bibliothèque standard Python)
+Minimal dependencies (demo mode):
+    None (uses only Python standard library)
 
-Dépendances pour fine-tuning réel:
+Dependencies for real fine-tuning:
     pip install torch transformers peft bitsandbytes
 
-Utilisation :
+Usage:
     python 08_lora_finetuning_example.py
 """
 
@@ -32,13 +32,13 @@ def calculate_lora_parameters(
     num_layers: int
 ) -> Dict[str, int]:
     """
-    Calculer le nombre de paramètres supplémentaires pour LoRA.
+    Calculate the number of additional parameters for LoRA.
     
-    LoRA ajoute deux matrices par couche (Q et V, généralement) :
-    - Matrice A : model_dim × lora_rank
-    - Matrice B : lora_rank × model_dim
+    LoRA adds two matrices per layer (Q and V, typically):
+    - Matrix A: model_dim × lora_rank
+    - Matrix B: lora_rank × model_dim
     
-    Total par couche : 2 × model_dim × lora_rank
+    Total per layer: 2 × model_dim × lora_rank
     """
     params_per_layer = 2 * model_dim * lora_rank
     total_lora_params = params_per_layer * num_layers
@@ -46,7 +46,7 @@ def calculate_lora_parameters(
     return {
         "params_per_layer": params_per_layer,
         "total_lora_params": total_lora_params,
-        "percentage_of_model": None  # Sera calculé plus bas
+        "percentage_of_model": None  # Will be calculated below
     }
 
 
@@ -57,31 +57,31 @@ def compare_finetuning_methods(
     lora_rank: int = 8
 ) -> Dict[str, Dict]:
     """
-    Comparer trois méthodes de fine-tuning en termes de :
-    - Paramètres entraînables
-    - Mémoire VRAM approximative
-    - Temps d'entraînement relatif
+    Compare three fine-tuning methods in terms of:
+    - Trainable parameters
+    - Approximate VRAM memory
+    - Relative training time
     """
     
     # === Full Fine-tuning ===
     full_params = model_size
-    # Règle empirique: VRAM ≈ 4 × paramètres (pour optimiseur Adam + gradients)
+    # Rule of thumb: VRAM ≈ 4 × parameters (for Adam optimizer + gradients)
     full_vram_gb = (full_params * 4) / (1024**3)
-    full_time_relative = 1.0  # Référence
+    full_time_relative = 1.0  # Reference
     
     # === LoRA ===
     lora_calc = calculate_lora_parameters(model_dim, lora_rank, num_layers)
     lora_params = lora_calc["total_lora_params"]
     lora_percentage = (lora_params / full_params) * 100
-    # LoRA : sauvegarder le modèle original + gradients sur LoRA seulement
+    # LoRA: keep the original model + gradients on LoRA only
     lora_vram_gb = (full_params + lora_params * 4) / (1024**3)
-    lora_time_relative = 0.3  # Empirique : plus rapide car moins de params à mettre à jour
+    lora_time_relative = 0.3  # Empirical: faster because fewer params to update
     
     # === QLoRA ===
-    # QLoRA quantifie le modèle en 4-bit, donc 4x moins de mémoire pour le modèle
-    # + sauvegarder LoRA weights
+    # QLoRA quantizes the model to 4-bit, so 4x less memory for the model
+    # + save LoRA weights
     qlora_vram_gb = (full_params / 4 + lora_params * 4) / (1024**3)
-    qlora_time_relative = 0.4  # Légèrement plus lent que LoRA (overhead quantification)
+    qlora_time_relative = 0.4  # Slightly slower than LoRA (quantization overhead)
     
     return {
         "full_fine_tuning": {
@@ -89,56 +89,56 @@ def compare_finetuning_methods(
             "param_percentage": 100.0,
             "vram_gb": full_vram_gb,
             "time_relative": full_time_relative,
-            "pros": "Meilleure performance",
-            "cons": "Très gourmand en VRAM et temps"
+            "pros": "Best performance",
+            "cons": "Very resource-hungry in VRAM and time"
         },
         "lora": {
             "trainable_params": lora_params,
             "param_percentage": lora_percentage,
             "vram_gb": lora_vram_gb,
             "time_relative": lora_time_relative,
-            "pros": "Bon compromis performance/ressources",
-            "cons": "Nécessite quand même pas mal de VRAM"
+            "pros": "Good performance/resources tradeoff",
+            "cons": "Still requires quite a bit of VRAM"
         },
         "qlora": {
             "trainable_params": lora_params,
             "param_percentage": lora_percentage,
             "vram_gb": qlora_vram_gb,
             "time_relative": qlora_time_relative,
-            "pros": "RÉVOLUTION : fine-tune 65B sur 1 GPU",
-            "cons": "Légèrement plus lent (quantification)"
+            "pros": "REVOLUTION: fine-tune 65B on 1 GPU",
+            "cons": "Slightly slower (quantization)"
         }
     }
 
 
 def main():
     print("=" * 80)
-    print("LORA & QLORA : FINE-TUNING EFFICACE")
+    print("LORA & QLORA: EFFICIENT FINE-TUNING")
     print("=" * 80)
     print()
     
-    # === Exemple 1 : LLaMA 7B ===
+    # === Example 1: LLaMA 7B ===
     print("=" * 80)
-    print("EXEMPLE 1 : Fine-tuner LLaMA-7B")
+    print("EXAMPLE 1: Fine-tuning LLaMA-7B")
     print("=" * 80)
     print()
     
-    llama_7b_params = 7_000_000_000  # 7 milliards de paramètres
-    llama_dim = 4096              # Dimension des embeddings
-    llama_layers = 32             # Nombre de couches
-    lora_rank = 8                 # Rang LoRA standard
+    llama_7b_params = 7_000_000_000  # 7 billion parameters
+    llama_dim = 4096              # Embedding dimension
+    llama_layers = 32             # Number of layers
+    lora_rank = 8                 # Standard LoRA rank
     
     results_7b = compare_finetuning_methods(
         llama_7b_params, llama_dim, llama_layers, lora_rank
     )
     
-    print(f"Modèle : LLaMA-7B ({llama_7b_params / 1e9:.1f}B paramètres)")
-    print(f"LoRA rank : {lora_rank}")
+    print(f"Model: LLaMA-7B ({llama_7b_params / 1e9:.1f}B parameters)")
+    print(f"LoRA rank: {lora_rank}")
     print()
     
-    print("Comparaison des méthodes :")
+    print("Method comparison:")
     print("-" * 80)
-    print(f"{'Méthode':<20} {'Params':<20} {'VRAM':<12} {'Temps':<10} {'Cas d\'usage'}")
+    print(f"{'Method':<20} {'Params':<20} {'VRAM':<12} {'Time':<10} {'Use case'}")
     print("-" * 80)
     
     for method, data in results_7b.items():
@@ -148,20 +148,20 @@ def main():
         print(f"{method:<20} {params_M:>15.1f}M {vram:>10.1f}GB {time_rel:>8.1f}x {'→ ' + data['pros']}")
     
     print()
-    print("INSIGHT :")
-    print("  • Full fine-tuning : 28 GB VRAM → nécessite A100 ou RTX 6000")
-    print("  • LoRA : 8 GB VRAM → entraînable sur RTX 4090 (24 GB)")
-    print("  • QLoRA : 2 GB VRAM → entraînable sur RTX 3090 (24 GB) ✅ RÉVOLUTION!")
+    print("INSIGHT:")
+    print("  • Full fine-tuning: 28 GB VRAM → requires A100 or RTX 6000")
+    print("  • LoRA: 8 GB VRAM → trainable on RTX 4090 (24 GB)")
+    print("  • QLoRA: 2 GB VRAM → trainable on RTX 3090 (24 GB) ✅ REVOLUTION!")
     print()
     
-    # === Exemple 2 : LLaMA 65B (le cas d'usage réel de QLoRA) ===
+    # === Example 2: LLaMA 65B (the real use case for QLoRA) ===
     print()
     print("=" * 80)
-    print("EXEMPLE 2 : Fine-tuner LLaMA-65B (le vrai cas d'usage de QLoRA)")
+    print("EXAMPLE 2: Fine-tuning LLaMA-65B (the real use case for QLoRA)")
     print("=" * 80)
     print()
     
-    llama_65b_params = 65_000_000_000  # 65 milliards
+    llama_65b_params = 65_000_000_000  # 65 billion
     llama_65b_dim = 8192
     llama_65b_layers = 80
     
@@ -169,13 +169,13 @@ def main():
         llama_65b_params, llama_65b_dim, llama_65b_layers, lora_rank
     )
     
-    print(f"Modèle : LLaMA-65B ({llama_65b_params / 1e9:.0f}B paramètres)")
-    print(f"LoRA rank : {lora_rank}")
+    print(f"Model: LLaMA-65B ({llama_65b_params / 1e9:.0f}B parameters)")
+    print(f"LoRA rank: {lora_rank}")
     print()
     
-    print("Comparaison des méthodes :")
+    print("Method comparison:")
     print("-" * 80)
-    print(f"{'Méthode':<20} {'Params':<20} {'VRAM':<12} {'Temps':<10}")
+    print(f"{'Method':<20} {'Params':<20} {'VRAM':<12} {'Time':<10}")
     print("-" * 80)
     
     for method, data in results_65b.items():
@@ -186,46 +186,46 @@ def main():
         print(f"{method:<20} {params_M:>15.1f}M {vram:>10.1f}GB {time_rel:>8.1f}x  {accessible}")
     
     print()
-    print("RÉVÉLATION :")
-    print("  • Full fine-tuning : 260 GB VRAM → IMPOSSIBLE (même pas un cluster GPU)")
-    print("  • LoRA : 32 GB VRAM → A100 ou deux RTX 4090 (possible mais coûteux)")
-    print("  • QLoRA : 8 GB VRAM → RTX 3090 SIMPLE (2024€ d'occasion) ✅✅✅")
+    print("REVELATION:")
+    print("  • Full fine-tuning: 260 GB VRAM → IMPOSSIBLE (not even a GPU cluster)")
+    print("  • LoRA: 32 GB VRAM → A100 or two RTX 4090s (possible but expensive)")
+    print("  • QLoRA: 8 GB VRAM → SINGLE RTX 3090 ($800 used) ✅✅✅")
     print()
-    print("  → QLoRA a démocratisé l'accès aux modèles LLM géants!")
+    print("  → QLoRA democratized access to giant LLM models!")
     print()
     
-    # === Cas d'usage pratique ===
+    # === Practical use case ===
     print()
     print("=" * 80)
-    print("CAS D'USAGE RÉEL : Adapter LLaMA-7B pour ton domaine métier")
+    print("REAL USE CASE: Adapting LLaMA-7B for your business domain")
     print("=" * 80)
     print()
     
-    print("Scénario : Vous travaillez chez SNCF et voulez adapter LLaMA-7B")
-    print("          pour répondre à des questions sur la maintenance ferroviaire.")
+    print("Scenario: You work at a railway company and want to adapt LLaMA-7B")
+    print("          to answer questions about railway maintenance.")
     print()
     
-    print("Approche LoRA :")
+    print("LoRA Approach:")
     print("-" * 80)
     print("""
-    1. Charger LLaMA-7B (13 GB en full precision)
-    2. Ajouter adaptateurs LoRA (85 MB seulement !)
-    3. Fine-tuner sur votre dataset SNCF (ex: 10K paires Q/A)
-    4. Pendant l'entraînement :
-       - Sauvegarder seulement les 85 MB de LoRA (pas 13 GB)
-       - VRAM nécessaire : ~8 GB (sur RTX 4090)
-       - Temps : ~2h au lieu de ~8h en full fine-tuning
-    5. En inférence :
-       - Charger LLaMA-7B + 85 MB de LoRA
-       - Performance : quasi-identique au full fine-tuning
-       - Latence : IDENTIQUE (fusion optionnelle pour vitesse)
+    1. Load LLaMA-7B (13 GB in full precision)
+    2. Add LoRA adapters (only 85 MB!)
+    3. Fine-tune on your railway dataset (e.g., 10K Q/A pairs)
+    4. During training:
+       - Save only the 85 MB of LoRA (not 13 GB)
+       - VRAM required: ~8 GB (on RTX 4090)
+       - Time: ~2h instead of ~8h with full fine-tuning
+    5. At inference:
+       - Load LLaMA-7B + 85 MB of LoRA
+       - Performance: nearly identical to full fine-tuning
+       - Latency: IDENTICAL (optional fusion for speed)
     
-    Résultat : Un modèle expert SNCF sans dépenser 100k€ en GPU!
+    Result: A domain-expert model without spending $100k on GPUs!
     """)
     
     print()
     print("=" * 80)
-    print("CODE PRATIQUE (pseudocode)")
+    print("PRACTICAL CODE (pseudocode)")
     print("=" * 80)
     print()
     
@@ -233,30 +233,30 @@ def main():
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from peft import get_peft_model, LoraConfig, TaskType
 
-# Charger le modèle de base
+# Load the base model
 model = AutoModelForCausalLM.from_pretrained(
     "meta-llama/Llama-2-7b",
-    device_map="auto",  # Distribue le modèle sur les GPUs disponibles
+    device_map="auto",  # Distribute the model across available GPUs
 )
 
-# Configurer LoRA
+# Configure LoRA
 lora_config = LoraConfig(
     task_type=TaskType.CAUSAL_LM,
-    r=8,                          # Rang LoRA
+    r=8,                          # LoRA rank
     lora_alpha=32,
     lora_dropout=0.1,
-    target_modules=["q_proj", "v_proj"],  # Couches à adapter
+    target_modules=["q_proj", "v_proj"],  # Layers to adapt
 )
 
-# Appliquer LoRA au modèle
+# Apply LoRA to the model
 model = get_peft_model(model, lora_config)
 
-# Afficher la réduction
+# Display the reduction
 model.print_trainable_parameters()
 # Output: trainable params: 4,194,304 || all params: 6,738,415,616
 #         Trainable%: 0.06%
 
-# Fine-tuner seulement avec votre dataset
+# Fine-tune only with your dataset
 trainer = Trainer(
     model=model,
     train_dataset=train_dataset,
@@ -264,33 +264,33 @@ trainer = Trainer(
 )
 trainer.train()
 
-# Sauvegarder SEULEMENT LoRA (85 MB)
-model.save_pretrained("./sncf_lora_weights")
+# Save ONLY LoRA (85 MB)
+model.save_pretrained("./railway_lora_weights")
 
-# En inférence, charger et fusionner
+# At inference, load and merge
 model = AutoModelForCausalLM.from_pretrained("meta-llama/Llama-2-7b")
-model = PeftModel.from_pretrained(model, "./sncf_lora_weights")
-model = model.merge_and_unload()  # Fusionner (optionnel, pour vitesse)
+model = PeftModel.from_pretrained(model, "./railway_lora_weights")
+model = model.merge_and_unload()  # Merge (optional, for speed)
 '''
     
     print(code_example)
     
     print()
     print("=" * 80)
-    print("RÉSUMÉ")
+    print("SUMMARY")
     print("=" * 80)
     print()
-    print("✅ LoRA/QLoRA = révolution d'accessibilité")
-    print("   - Fine-tune des modèles géants sans cluster GPU")
-    print("   - Sauvegarder seulement quelques MB au lieu de GB")
-    print("   - Performance quasi-identique au full fine-tuning")
+    print("✅ LoRA/QLoRA = accessibility revolution")
+    print("   - Fine-tune giant models without a GPU cluster")
+    print("   - Save only a few MB instead of GB")
+    print("   - Performance nearly identical to full fine-tuning")
     print()
-    print("⚠️  Quand utiliser quoi :")
-    print("   - LoRA : petit modèle (7-13B) + GPU mid-range (RTX 4090)")
-    print("   - QLoRA : modèle géant (65B+) + GPU basic (RTX 3090)")
-    print("   - Full fine-tuning : données TRÈS grandes (>1M exemples) + infra GPU massive")
+    print("⚠️  When to use what:")
+    print("   - LoRA: small model (7-13B) + mid-range GPU (RTX 4090)")
+    print("   - QLoRA: giant model (65B+) + basic GPU (RTX 3090)")
+    print("   - Full fine-tuning: VERY large data (>1M examples) + massive GPU infrastructure")
     print()
-    print("💡 Conseil : Commencez TOUJOURS par LoRA. C'est le sweet spot.")
+    print("💡 Advice: ALWAYS start with LoRA. It's the sweet spot.")
     print()
 
 

@@ -1,18 +1,18 @@
 #!/usr/bin/env python
 """
-Script 1 : Tokenisation et impact sur la longueur des séquences (Chapitre 2).
+Script 1: Tokenization and Sequence Length Impact (Chapter 2).
 
-Ce script illustre :
-- Comment les tokenizers (BPE, WordPiece) fragmentent le texte.
-- L'impact du nombre de tokens sur le coût computationnel (O(n²) pour l'attention).
-- Comment des langues différentes ont des ratios différents.
+This script illustrates:
+- How tokenizers (BPE, WordPiece) fragment text.
+- The impact of token count on computational cost (O(n²) for attention).
+- How different languages have different ratios.
 
-Note : Utilise GPT-2 comme fallback si LLaMA n'est pas accessible.
+Note: Uses GPT-2 as fallback if LLaMA is not accessible.
 
-Dépendances :
+Dependencies:
     pip install transformers torch
 
-Utilisation :
+Usage:
     python 01_tokenization_embeddings.py
 """
 
@@ -22,19 +22,19 @@ import sys
 
 def main():
     try:
-        # Charger un tokenizer (LLaMA 2 est petit et facile à charger)
-        print("Chargement du tokenizer LLaMA 2...")
+        # Load a tokenizer (LLaMA 2 is small and easy to load)
+        print("Loading LLaMA 2 tokenizer...")
         tokenizer = AutoTokenizer.from_pretrained(
             "meta-llama/Llama-2-7b-hf",
             trust_remote_code=True,
         )
     except Exception as e:
-        print(f"Erreur : {e}")
-        print("\nAlternative : utiliser un tokenizer ouvert (GPT-2)")
+        print(f"Error: {e}")
+        print("\nAlternative: using an open tokenizer (GPT-2)")
         from transformers import GPT2Tokenizer
         tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
 
-    # Textes de test (français et anglais)
+    # Test texts (French and English)
     textes = [
         "L'IA est utile",
         "Bonjour, comment allez-vous?",
@@ -43,39 +43,39 @@ def main():
     ]
 
     print("\n" + "=" * 60)
-    print("ANALYSE DE TOKENISATION")
+    print("TOKENIZATION ANALYSIS")
     print("=" * 60 + "\n")
 
     for texte in textes:
         tokens = tokenizer.encode(texte)
         token_strings = tokenizer.convert_ids_to_tokens(tokens)
 
-        print(f"Texte: {texte}")
-        print(f"  Nombre de tokens: {len(tokens)}")
+        print(f"Text: {texte}")
+        print(f"  Token count: {len(tokens)}")
         print(f"  Token IDs: {tokens[:10]}{'...' if len(tokens) > 10 else ''}")
-        print(f"  Tokens (texte): {token_strings[:10]}{'...' if len(tokens) > 10 else ''}")
+        print(f"  Tokens (text): {token_strings[:10]}{'...' if len(tokens) > 10 else ''}")
         print()
 
-    # Démonstration : impact de la longueur
+    # Demonstration: length impact
     print("\n" + "=" * 60)
-    print("IMPACT SUR LE COÛT DE CALCUL")
+    print("IMPACT ON COMPUTATIONAL COST")
     print("=" * 60 + "\n")
 
     texte_court = "Bonjour"
-    texte_long = texte_court * 100  # Répétition artificielle
+    texte_long = texte_court * 100  # Artificial repetition
 
     n_court = len(tokenizer.encode(texte_court))
     n_long = len(tokenizer.encode(texte_long))
 
-    print(f"Texte court ({len(texte_court)} caractères) → {n_court} tokens")
-    print(f"Texte long ({len(texte_long)} caractères) → {n_long} tokens")
-    print(f"Facteur d'augmentation: {n_long / n_court:.1f}x")
+    print(f"Short text ({len(texte_court)} characters) → {n_court} tokens")
+    print(f"Long text ({len(texte_long)} characters) → {n_long} tokens")
+    print(f"Increase factor: {n_long / n_court:.1f}x")
 
     print("\n⚠️ IMPLICATIONS:")
-    print("  • Plus de tokens = plus de VRAM consommée")
-    print("  • Plus de tokens = latence plus élevée")
-    print("  • Plus de tokens = coût API plus cher")
-    print("  • Coût d'inférence ∝ O(n²) pour l'attention multi-tête")
+    print("  • More tokens = more VRAM consumed")
+    print("  • More tokens = higher latency")
+    print("  • More tokens = higher API cost")
+    print("  • Inference cost ∝ O(n²) for multi-head attention")
 
 
 if __name__ == "__main__":

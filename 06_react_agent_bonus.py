@@ -1,27 +1,27 @@
 #!/usr/bin/env python
 """
-Script BONUS 1 : Agent Autonome - Pattern ReAct (Chapitres 13 & 14)
+BONUS Script 1: Autonomous Agent - ReAct Pattern (Chapters 13 & 14)
 
-Ce script implémente un mini-framework générique pour construire des agents
-autonomes capables de :
-1. Raisonner sur la tâche (Thought)
-2. Décider d'une action (Action) 
-3. Observer le résultat (Observation)
-4. Boucler jusqu'à la résolution
+This script implements a generic mini-framework for building autonomous agents
+capable of:
+1. Reasoning about the task (Thought)
+2. Deciding on an action (Action)
+3. Observing the result (Observation)
+4. Looping until resolution
 
-Un agent ReAct est plus sophistiqué qu'un simple appel de fonction :
-- Il peut utiliser des outils (calculatrice, web search, APIs)
-- Il peut corriger ses erreurs
-- Il peut itérer et affiner sa réponse
+A ReAct agent is more sophisticated than a simple function call:
+- It can use tools (calculator, web search, APIs)
+- It can correct its errors
+- It can iterate and refine its response
 
-Dépendances :
-    Aucune (utilise uniquement la bibliothèque standard Python)
+Dependencies:
+    None (uses only the Python standard library)
 
-Utilisation :
+Usage:
     python 06_react_agent_bonus.py
 
-Note : Ce script utilise un LLM SIMULÉ (heuristiques basiques).
-      Pour intégrer un vrai LLM, voir REACT_AGENT_INTEGRATION.md
+Note: This script uses a SIMULATED LLM (basic heuristics).
+      To integrate a real LLM, see REACT_AGENT_INTEGRATION.md
 """
 
 from typing import Callable, Dict, Any, Optional
@@ -31,16 +31,16 @@ import json
 
 
 class ActionType(Enum):
-    """Types d'action qu'un agent peut prendre."""
-    THINK = "Thought"          # Réfléchir, analyser
-    ACTION = "Action"          # Appeler un outil
-    OBSERVATION = "Observation"  # Recevoir le résultat
-    FINAL_ANSWER = "Final Answer"  # Donner la réponse finale
+    """Types of actions an agent can take."""
+    THINK = "Thought"          # Think, analyze
+    ACTION = "Action"          # Call a tool
+    OBSERVATION = "Observation"  # Receive the result
+    FINAL_ANSWER = "Final Answer"  # Give the final answer
 
 
 @dataclass
 class ToolDefinition:
-    """Définition d'un outil disponible pour l'agent."""
+    """Definition of a tool available to the agent."""
     name: str
     description: str
     parameters: Dict[str, str]  # {"param_name": "type description"}
@@ -49,9 +49,9 @@ class ToolDefinition:
 
 class Agent:
     """
-    Un agent autonome capable de raisonner et d'agir.
+    An autonomous agent capable of reasoning and acting.
     
-    Implémente le pattern ReAct :
+    Implements the ReAct pattern:
     Thought → Action → Observation → Thought → ... → Final Answer
     """
 
@@ -68,21 +68,21 @@ class Agent:
         parameters: Dict[str, str],
         func: Callable,
     ) -> None:
-        """Enregistrer un nouvel outil disponible pour l'agent."""
+        """Register a new tool available to the agent."""
         self.tools[name] = ToolDefinition(
             name=name,
             description=description,
             parameters=parameters,
             func=func,
         )
-        print(f"✅ Outil enregistré: {name}")
+        print(f"✅ Tool registered: {name}")
 
     def _format_tools_description(self) -> str:
-        """Générer une description des outils disponibles."""
+        """Generate a description of available tools."""
         if not self.tools:
-            return "Aucun outil disponible."
+            return "No tools available."
 
-        tools_desc = "Outils disponibles:\n"
+        tools_desc = "Available tools:\n"
         for tool in self.tools.values():
             params_str = ", ".join(
                 [f"{k}: {v}" for k, v in tool.parameters.items()]
@@ -93,50 +93,50 @@ class Agent:
 
     def _simulate_llm_reasoning(self, task: str, context: str) -> str:
         """
-        Simuler un appel LLM pour générer du raisonnement.
+        Simulate an LLM call to generate reasoning.
         
-        En pratique, ce serait un appel à OpenAI, Anthropic, etc.
-        Ici, on utilise une simple heuristique pour la démo.
+        In practice, this would be a call to OpenAI, Anthropic, etc.
+        Here, we use a simple heuristic for the demo.
         """
-        # Prompt simplifié
-        prompt = f"""Tu es un agent autonome efficace.
+        # Simplified prompt
+        prompt = f"""You are an efficient autonomous agent.
 
-Tâche: {task}
+Task: {task}
 
-Contexte actuel:
+Current context:
 {context}
 
 {self._format_tools_description()}
 
-Réponds au format suivant:
-Thought: [Ton analyse de la situation]
-Action: [nom_outil](param1=val1, param2=val2) OU "Final Answer: [réponse finale]"
+Respond in the following format:
+Thought: [Your analysis of the situation]
+Action: [tool_name](param1=val1, param2=val2) OR "Final Answer: [final answer]"
 
-Sois concis et actionnel."""
+Be concise and action-oriented."""
 
         print(f"\n{'='*70}")
-        print("💭 PROMPT ENVOYÉ AU LLM (simulé):")
+        print("💭 PROMPT SENT TO LLM (simulated):")
         print(f"{'='*70}")
         print(prompt)
         print(f"{'='*70}\n")
 
-        # Simulation : générer une réponse heuristique
+        # Simulation: generate a heuristic response
         return self._generate_simulated_response(task, context)
 
     def _generate_simulated_response(self, task: str, context: str) -> str:
-        """Générer une réponse simulée (sans appel API)."""
-        # Heuristiques simples pour la démo
-        if "calculer" in task.lower() and "+" in context:
-            return "Thought: Je vois deux nombres à additionner.\nAction: calculatrice(operation=addition, a=5, b=3)"
-        elif "calculer" in task.lower() and "*" in context:
-            return "Thought: Je dois multiplier deux nombres.\nAction: calculatrice(operation=multiplication, a=4, b=6)"
-        elif "jour" in task.lower():
-            return "Thought: Je dois récupérer la date d'aujourd'hui.\nAction: get_current_date()"
+        """Generate a simulated response (without API call)."""
+        # Simple heuristics for the demo
+        if "calculate" in task.lower() and "+" in context:
+            return "Thought: I see two numbers to add.\nAction: calculator(operation=addition, a=5, b=3)"
+        elif "calculate" in task.lower() and "*" in context:
+            return "Thought: I need to multiply two numbers.\nAction: calculator(operation=multiplication, a=4, b=6)"
+        elif "day" in task.lower() or "today" in task.lower():
+            return "Thought: I need to get today's date.\nAction: get_current_date()"
         else:
-            return f"Thought: Je dois répondre à: {task}\nFinal Answer: {task}"
+            return f"Thought: I need to answer: {task}\nFinal Answer: {task}"
 
     def _parse_action(self, response: str) -> tuple[str, Optional[str]]:
-        """Parser la réponse du LLM pour extraire l'action."""
+        """Parse the LLM response to extract the action."""
         lines = response.strip().split("\n")
 
         thought = None
@@ -151,55 +151,55 @@ Sois concis et actionnel."""
         return action, thought
 
     def _execute_action(self, action: str) -> str:
-        """Exécuter une action (appeler un outil)."""
-        # Parser le format: tool_name(param1=val1, param2=val2)
+        """Execute an action (call a tool)."""
+        # Parse the format: tool_name(param1=val1, param2=val2)
         if action.startswith("Final Answer:"):
             answer = action.replace("Final Answer:", "").strip()
             return f"FINAL_ANSWER:{answer}"
 
-        # Extraire le nom de l'outil et les paramètres
+        # Extract the tool name and parameters
         try:
-            # Gestion robuste des parenthèses
+            # Robust parentheses handling
             if "(" not in action or ")" not in action:
-                return f"❌ Format d'action invalide: {action}"
+                return f"❌ Invalid action format: {action}"
             
             tool_name = action.split("(")[0].strip()
             params_str = action.split("(")[1].rsplit(")", 1)[0]
 
             if tool_name not in self.tools:
-                return f"❌ Outil inconnu: {tool_name}"
+                return f"❌ Unknown tool: {tool_name}"
 
-            # Parser les paramètres (format: key=value, key=value)
-            # Gestion améliorée des guillemets et échappements
+            # Parse the parameters (format: key=value, key=value)
+            # Improved handling of quotes and escapes
             params = {}
             for param in params_str.split(","):
                 if "=" in param:
                     key, val = param.split("=", 1)
                     key = key.strip()
                     val = val.strip()
-                    # Supprimer guillemets simples ET doubles
+                    # Remove single AND double quotes
                     if (val.startswith('"') and val.endswith('"')) or \
                        (val.startswith("'") and val.endswith("'")):
                         val = val[1:-1]
                     params[key] = val
 
-            # Exécuter l'outil
+            # Execute the tool
             tool = self.tools[tool_name]
             result = tool.func(**params)
             return f"✅ {tool_name}({params_str}) → {result}"
 
         except Exception as e:
-            return f"❌ Erreur lors de l'exécution: {e}"
+            return f"❌ Error during execution: {e}"
 
     def run(self, task: str, verbose: bool = True) -> str:
         """
-        Exécuter l'agent sur une tâche donnée.
+        Execute the agent on a given task.
         
-        Implémente la boucle ReAct jusqu'à résolution ou max_iterations.
+        Implements the ReAct loop until resolution or max_iterations.
         """
         print(f"\n{'='*70}")
         print(f"🤖 AGENT: {self.name}")
-        print(f"📌 TÂCHE: {task}")
+        print(f"📌 TASK: {task}")
         print(f"{'='*70}\n")
 
         context = ""
@@ -207,40 +207,40 @@ Sois concis et actionnel."""
 
         for iteration in range(1, self.max_iterations + 1):
             print(f"\n{'─'*70}")
-            print(f"⏳ ITÉRATION {iteration}/{self.max_iterations}")
+            print(f"⏳ ITERATION {iteration}/{self.max_iterations}")
             print(f"{'─'*70}")
 
-            # 1. THOUGHT : Demander à l'LLM de réfléchir
+            # 1. THOUGHT: Ask the LLM to think
             llm_response = self._simulate_llm_reasoning(task, context)
 
-            # 2. Parser la réponse
+            # 2. Parse the response
             action, thought = self._parse_action(llm_response)
 
             if thought and verbose:
-                print(f"💭 Pensée: {thought}")
+                print(f"💭 Thought: {thought}")
 
             if not action:
-                print("⚠️ Pas d'action générée, arrêt.")
+                print("⚠️ No action generated, stopping.")
                 break
 
-            # 3. Vérifier si c'est la réponse finale
+            # 3. Check if it's the final answer
             if action.startswith("Final Answer:"):
                 final_answer = action.replace("Final Answer:", "").strip()
-                print(f"\n✅ RÉPONSE FINALE: {final_answer}")
+                print(f"\n✅ FINAL ANSWER: {final_answer}")
                 break
 
-            # 4. OBSERVATION : Exécuter l'action
+            # 4. OBSERVATION: Execute the action
             observation = self._execute_action(action)
             print(f"🔧 Action: {action}")
-            print(f"📊 Résultat: {observation}")
+            print(f"📊 Result: {observation}")
 
-            # 5. Mettre à jour le contexte
-            context += f"\nItération {iteration}:\n"
-            context += f"  Pensée: {thought}\n"
+            # 5. Update the context
+            context += f"\nIteration {iteration}:\n"
+            context += f"  Thought: {thought}\n"
             context += f"  Action: {action}\n"
             context += f"  Observation: {observation}"
 
-            # Sauvegarder dans l'historique
+            # Save in history
             self.history.append({
                 "iteration": iteration,
                 "thought": thought,
@@ -249,31 +249,31 @@ Sois concis et actionnel."""
             })
 
         if not final_answer:
-            final_answer = "Nombre maximum d'itérations atteint sans réponse finale."
+            final_answer = "Maximum number of iterations reached without final answer."
 
         return final_answer
 
     def get_history(self) -> list:
-        """Retourner l'historique des itérations."""
+        """Return the iteration history."""
         return self.history
 
 
 # ============================================================================
-# EXEMPLE D'UTILISATION
+# USAGE EXAMPLE
 # ============================================================================
 
 def main():
     print("\n" + "=" * 70)
-    print("AGENT AUTONOME - PATTERN REACT")
+    print("AUTONOMOUS AGENT - REACT PATTERN")
     print("=" * 70)
 
-    # Créer un agent
-    agent = Agent(name="MonAgent", max_iterations=5)
+    # Create an agent
+    agent = Agent(name="MyAgent", max_iterations=5)
 
-    # ===== Enregistrer des outils =====
+    # ===== Register tools =====
 
-    def calculatrice(operation: str = "addition", a: float = 0, b: float = 0) -> str:
-        """Effectuer une opération arithmétique."""
+    def calculator(operation: str = "addition", a: float = 0, b: float = 0) -> str:
+        """Perform an arithmetic operation."""
         try:
             a_val = float(a)
             b_val = float(b)
@@ -282,115 +282,115 @@ def main():
                 result = a_val + b_val
             elif operation.lower() == "multiplication":
                 result = a_val * b_val
-            elif operation.lower() == "soustraction":
+            elif operation.lower() == "subtraction":
                 result = a_val - b_val
             elif operation.lower() == "division":
                 if b_val == 0:
-                    return "❌ Division par zéro"
+                    return "❌ Division by zero"
                 result = a_val / b_val
             else:
-                return f"❌ Opération inconnue: {operation}"
+                return f"❌ Unknown operation: {operation}"
 
             return f"{a_val} {operation} {b_val} = {result}"
         except Exception as e:
-            return f"❌ Erreur: {e}"
+            return f"❌ Error: {e}"
 
     def get_current_date() -> str:
-        """Obtenir la date actuelle."""
+        """Get the current date."""
         from datetime import date
-        return f"Date d'aujourd'hui: {date.today().strftime('%d/%m/%Y')}"
+        return f"Today's date: {date.today().strftime('%m/%d/%Y')}"
 
     def search_knowledge_base(query: str = "") -> str:
-        """Rechercher dans une base de connaissances."""
+        """Search in a knowledge base."""
         kb = {
-            "transformer": "Architecture basée sur l'attention multi-tête",
-            "llm": "Large Language Model — modèle de langage de grande taille",
-            "bert": "Modèle encodeur bidirectionnel pré-entraîné",
-            "rag": "Retrieval-Augmented Generation — génération augmentée",
+            "transformer": "Architecture based on multi-head attention",
+            "llm": "Large Language Model — large-scale language model",
+            "bert": "Bidirectional pre-trained encoder model",
+            "rag": "Retrieval-Augmented Generation — augmented generation",
         }
         key = query.lower().strip()
         if key in kb:
             return f"✅ {key}: {kb[key]}"
         else:
-            return f"❌ Concept '{key}' non trouvé dans la base de connaissances"
+            return f"❌ Concept '{key}' not found in the knowledge base"
 
-    # Enregistrer les outils
+    # Register the tools
     agent.register_tool(
-        name="calculatrice",
-        description="Effectuer des opérations arithmétiques (+, -, *, /)",
+        name="calculator",
+        description="Perform arithmetic operations (+, -, *, /)",
         parameters={"operation": "str", "a": "float", "b": "float"},
-        func=calculatrice,
+        func=calculator,
     )
 
     agent.register_tool(
         name="get_current_date",
-        description="Récupérer la date actuelle",
+        description="Get the current date",
         parameters={},
         func=get_current_date,
     )
 
     agent.register_tool(
         name="search_knowledge_base",
-        description="Rechercher des informations dans la base de connaissances",
+        description="Search for information in the knowledge base",
         parameters={"query": "str"},
         func=search_knowledge_base,
     )
 
-    # ===== Exécuter des tâches =====
+    # ===== Execute tasks =====
 
     tasks = [
-        "Calcule 5 + 3 et dis-moi le résultat",
-        "Multiplie 4 par 6, puis additionne 2",
-        "Quel est le jour aujourd'hui?",
+        "Calculate 5 + 3 and tell me the result",
+        "Multiply 4 by 6, then add 2",
+        "What day is it today?",
     ]
 
     all_results = []
 
     for i, task in enumerate(tasks, 1):
         print(f"\n\n{'#' * 70}")
-        print(f"TÂCHE {i}/{len(tasks)}")
+        print(f"TASK {i}/{len(tasks)}")
         print(f"{'#' * 70}")
 
         agent.history = []  # Reset history
         result = agent.run(task, verbose=True)
         all_results.append({"task": task, "result": result})
 
-    # ===== Résumé =====
+    # ===== Summary =====
     print(f"\n\n{'='*70}")
-    print("RÉSUMÉ DES RÉSULTATS")
+    print("RESULTS SUMMARY")
     print(f"{'='*70}\n")
 
     for i, item in enumerate(all_results, 1):
-        print(f"{i}. Tâche: {item['task']}")
-        print(f"   Résultat: {item['result']}\n")
+        print(f"{i}. Task: {item['task']}")
+        print(f"   Result: {item['result']}\n")
 
-    # ===== Analyse =====
+    # ===== Analysis =====
     print(f"\n{'='*70}")
-    print("ANALYSE")
+    print("ANALYSIS")
     print(f"{'='*70}\n")
 
-    print("✅ AVANTAGES DU PATTERN REACT:")
-    print("  • Transparence : chaque étape est explicitée")
-    print("  • Flexibilité : l'agent peut utiliser n'importe quel outil")
-    print("  • Correction : peut revenir en arrière et corriger ses erreurs")
-    print("  • Extensibilité : facile d'ajouter de nouveaux outils\n")
+    print("✅ ADVANTAGES OF THE REACT PATTERN:")
+    print("  • Transparency: each step is made explicit")
+    print("  • Flexibility: the agent can use any tool")
+    print("  • Correction: can go back and correct its errors")
+    print("  • Extensibility: easy to add new tools\n")
 
-    print("⚠️ LIMITATIONS (VERSION SIMULÉE):")
-    print("  • LLM simulé : utilise des heuristiques, pas un vrai modèle")
-    print("  • Pas de vrai LLM : résultats prévisibles et limités")
-    print("  • Token limit : un vrai agent est limité par la fenêtre de contexte\n")
+    print("⚠️ LIMITATIONS (SIMULATED VERSION):")
+    print("  • Simulated LLM: uses heuristics, not a real model")
+    print("  • No real LLM: predictable and limited results")
+    print("  • Token limit: a real agent is limited by the context window\n")
 
-    print("🔧 POUR UTILISER AVEC UN VRAI LLM:")
-    print("  1. Remplacer _simulate_llm_reasoning() par un appel API")
-    print("  2. Utiliser OpenAI, Anthropic, ou tout autre provider")
-    print("  3. Gérer rate limits et timeouts\n")
+    print("🔧 TO USE WITH A REAL LLM:")
+    print("  1. Replace _simulate_llm_reasoning() with an API call")
+    print("  2. Use OpenAI, Anthropic, or any other provider")
+    print("  3. Handle rate limits and timeouts\n")
 
-    print("💡 CAS D'USAGE RÉELS:")
-    print("  • Assistants de support client (ticketing, FAQ)")
-    print("  • Agents de recherche autonomes (web scraping, APIs)")
-    print("  • Systèmes de planification (calendrier, logistics)")
-    print("  • Code debugging et code generation")
-    print("  • Analyse de données et reporting")
+    print("💡 REAL-WORLD USE CASES:")
+    print("  • Customer support assistants (ticketing, FAQ)")
+    print("  • Autonomous research agents (web scraping, APIs)")
+    print("  • Planning systems (calendar, logistics)")
+    print("  • Code debugging and code generation")
+    print("  • Data analysis and reporting")
 
 
 if __name__ == "__main__":

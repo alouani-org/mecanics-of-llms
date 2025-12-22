@@ -50,6 +50,7 @@ mecanics-of-llms/
 ├── 07_llamaindex_rag_advanced.py
 ├── 08_lora_finetuning_example.py
 ├── 09_mini_assistant_complet.py
+├── 10_activation_steering_demo.py
 │
 ├── docs/
 │   ├── en/                    ← English Documentation (7 files)
@@ -75,7 +76,7 @@ mecanics-of-llms/
 
 ---
 
-## 💻 9 Executable Scripts
+## 💻 10 Executable Scripts
 
 All scripts run **without external APIs** and are self-contained:
 
@@ -90,6 +91,7 @@ All scripts run **without external APIs** and are self-contained:
 | 7 | `07_llamaindex_rag_advanced.py` | Advanced RAG, indexing |
 | 8 | `08_lora_finetuning_example.py` | Fine-tuning, LoRA, QLoRA |
 | 9 | `09_mini_assistant_complet.py` | **Integrative Project (Ch. 11-15)** |
+| 10 | `10_activation_steering_demo.py` | **Activation Steering, 3SO, concept vectors** |
 
 ---
 

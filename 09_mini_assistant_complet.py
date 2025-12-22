@@ -1,36 +1,36 @@
 #!/usr/bin/env python
 """
-Script BONUS 4 : Mini-Assistant Complet - Projet Intégrateur (Chapitres 11-15)
+Script BONUS 4: Complete Mini-Assistant - Integration Project (Chapters 11-15)
 
-Ce projet final combine RAG, Agents, Prompting et Évaluation en un système cohérent.
-Il démontre comment assembler tous les concepts du livre dans une application réelle.
+This final project combines RAG, Agents, Prompting and Evaluation into a coherent system.
+It demonstrates how to assemble all the concepts from the book into a real application.
 
-Architecture :
-    1. RAG : Indexation et recherche de documents (Ch. 13)
-    2. Agent ReAct : Boucle Thought→Action→Observation (Ch. 14)
-    3. Prompting : Zero-shot, Few-shot, Chain-of-Thought (Ch. 11)
-    4. Évaluation : Self-consistency, confidence scoring (Ch. 12, 15)
-    5. Outils : Calculatrice, recherche, résumé (Ch. 14)
+Architecture:
+    1. RAG: Document indexing and retrieval (Ch. 13)
+    2. ReAct Agent: Thought→Action→Observation loop (Ch. 14)
+    3. Prompting: Zero-shot, Few-shot, Chain-of-Thought (Ch. 11)
+    4. Evaluation: Self-consistency, confidence scoring (Ch. 12, 15)
+    5. Tools: Calculator, search, summary (Ch. 14)
 
-Modes d'exécution :
-    - Mode STANDALONE : Fonctionne sans API externe (LLM simulé)
-    - Mode PRODUCTION : Intégration OpenAI/Claude (décommenter le code)
+Execution modes:
+    - STANDALONE mode: Works without external API (simulated LLM)
+    - PRODUCTION mode: OpenAI/Claude integration (uncomment the code)
 
-Dépendances minimales (mode standalone) :
+Minimal dependencies (standalone mode):
     pip install numpy scikit-learn
 
-Dépendances production (optionnel) :
+Production dependencies (optional):
     pip install openai anthropic
 
-Utilisation :
+Usage:
     python 09_mini_assistant_complet.py
 
-Points d'extension pour étudiants :
-    - Ajouter de nouveaux outils (météo, actualités, etc.)
-    - Intégrer un vrai LLM (OpenAI, Ollama, etc.)
-    - Persister les conversations (SQLite, JSON)
-    - Ajouter une interface web (Streamlit, Gradio)
-    - Implémenter des métriques d'évaluation plus avancées
+Extension points for students:
+    - Add new tools (weather, news, etc.)
+    - Integrate a real LLM (OpenAI, Ollama, etc.)
+    - Persist conversations (SQLite, JSON)
+    - Add a web interface (Streamlit, Gradio)
+    - Implement more advanced evaluation metrics
 """
 
 import re
@@ -40,19 +40,19 @@ from dataclasses import dataclass
 from datetime import datetime
 import hashlib
 
-# Imports pour le RAG (vectorisation basique)
+# Imports for RAG (basic vectorization)
 import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
 
 # ============================================================================
-# PARTIE 1 : SYSTÈME RAG (Chapitre 13)
+# PART 1: RAG SYSTEM (Chapter 13)
 # ============================================================================
 
 @dataclass
 class Document:
-    """Représentation d'un document dans la base de connaissances."""
+    """Representation of a document in the knowledge base."""
     id: str
     content: str
     metadata: Dict[str, Any]
@@ -63,10 +63,10 @@ class Document:
 
 class RAGSystem:
     """
-    Système RAG complet avec vectorisation TF-IDF et recherche par similarité.
+    Complete RAG system with TF-IDF vectorization and similarity search.
     
-    En production, remplacer par des embeddings denses (OpenAI, E5, etc.)
-    et une base vectorielle (Pinecone, Weaviate, ChromaDB).
+    In production, replace with dense embeddings (OpenAI, E5, etc.)
+    and a vector database (Pinecone, Weaviate, ChromaDB).
     """
     
     def __init__(self):
@@ -75,7 +75,7 @@ class RAGSystem:
         self.doc_vectors: Optional[np.ndarray] = None
     
     def add_document(self, content: str, metadata: Dict[str, Any]) -> str:
-        """Ajouter un document à la base de connaissances."""
+        """Add a document to the knowledge base."""
         doc_id = hashlib.md5(
             f"{content[:100]}{datetime.now()}".encode()
         ).hexdigest()[:8]
@@ -85,35 +85,35 @@ class RAGSystem:
         return doc_id
     
     def index_documents(self):
-        """Indexer tous les documents (création de l'index vectoriel)."""
+        """Index all documents (create the vector index)."""
         if not self.documents:
-            raise ValueError("Aucun document à indexer")
+            raise ValueError("No documents to index")
         
-        # Vectorisation TF-IDF
+        # TF-IDF vectorization
         texts = [doc.content for doc in self.documents]
         self.vectorizer = TfidfVectorizer(
             max_features=1000,
-            stop_words='english',  # Utilisez 'french' pour du français
+            stop_words='english',  # Use 'french' for French text
             ngram_range=(1, 2)
         )
         self.doc_vectors = self.vectorizer.fit_transform(texts)
         
-        print(f"✓ Index créé : {len(self.documents)} documents indexés")
+        print(f"✓ Index created: {len(self.documents)} documents indexed")
     
     def retrieve(self, query: str, top_k: int = 3) -> List[Tuple[Document, float]]:
         """
-        Rechercher les documents les plus pertinents.
+        Search for the most relevant documents.
         
         Returns:
-            Liste de tuples (Document, score de similarité)
+            List of tuples (Document, similarity score)
         """
         if self.vectorizer is None or self.doc_vectors is None:
-            raise ValueError("Index non créé. Appelez index_documents() d'abord.")
+            raise ValueError("Index not created. Call index_documents() first.")
         
-        # Vectorisation de la requête
+        # Query vectorization
         query_vec = self.vectorizer.transform([query])
         
-        # Calcul de similarité cosinus
+        # Cosine similarity calculation
         similarities = cosine_similarity(query_vec, self.doc_vectors).flatten()
         
         # Top-K documents
@@ -128,17 +128,17 @@ class RAGSystem:
 
 
 # ============================================================================
-# PARTIE 2 : OUTILS (Chapitre 14)
+# PART 2: TOOLS (Chapter 14)
 # ============================================================================
 
 class ToolRegistry:
-    """Registre d'outils disponibles pour l'agent."""
+    """Registry of tools available to the agent."""
     
     def __init__(self):
         self.tools: Dict[str, Dict[str, Any]] = {}
     
     def register(self, name: str, description: str, func):
-        """Enregistrer un nouvel outil."""
+        """Register a new tool."""
         self.tools[name] = {
             "name": name,
             "description": description,
@@ -146,84 +146,84 @@ class ToolRegistry:
         }
     
     def get_tools_description(self) -> str:
-        """Générer une description texte de tous les outils."""
+        """Generate a text description of all tools."""
         if not self.tools:
-            return "Aucun outil disponible."
+            return "No tools available."
         
-        desc = "Outils disponibles :\n"
+        desc = "Available tools:\n"
         for tool in self.tools.values():
             desc += f"  - {tool['name']}: {tool['description']}\n"
         return desc
     
     def execute(self, tool_name: str, **kwargs) -> str:
-        """Exécuter un outil avec les arguments fournis."""
+        """Execute a tool with the provided arguments."""
         if tool_name not in self.tools:
-            return f"❌ Outil '{tool_name}' inconnu"
+            return f"❌ Unknown tool '{tool_name}'"
         
         try:
             result = self.tools[tool_name]["func"](**kwargs)
             return str(result)
         except Exception as e:
-            return f"❌ Erreur lors de l'exécution de '{tool_name}': {e}"
+            return f"❌ Error executing '{tool_name}': {e}"
 
 
-# Outils prédéfinis
+# Predefined tools
 
 def tool_calculator(expression: str) -> str:
-    """Évalue une expression mathématique simple."""
+    """Evaluate a simple mathematical expression."""
     try:
-        # Sécurité : whitelist des opérations autorisées
+        # Security: whitelist of allowed operations
         allowed = set("0123456789+-*/(). ")
         if not all(c in allowed for c in expression):
-            return "Expression invalide (caractères interdits)"
+            return "Invalid expression (forbidden characters)"
         
         result = eval(expression)
         return f"{expression} = {result}"
     except Exception as e:
-        return f"Erreur de calcul : {e}"
+        return f"Calculation error: {e}"
 
 
 def tool_search_knowledge(query: str, rag_system: RAGSystem) -> str:
-    """Recherche dans la base de connaissances RAG."""
+    """Search in the RAG knowledge base."""
     try:
         results = rag_system.retrieve(query, top_k=2)
         
         if not results:
-            return "Aucun document pertinent trouvé."
+            return "No relevant documents found."
         
-        response = "Documents trouvés :\n"
+        response = "Documents found:\n"
         for doc, score in results:
-            title = doc.metadata.get('title', 'Sans titre')
+            title = doc.metadata.get('title', 'Untitled')
             snippet = doc.content[:200] + "..."
             response += f"\n[{title}] (score: {score:.2f})\n{snippet}\n"
         
         return response
     except Exception as e:
-        return f"Erreur de recherche : {e}"
+        return f"Search error: {e}"
 
 
 def tool_current_time() -> str:
-    """Retourne l'heure actuelle."""
+    """Returns the current time."""
     return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
 
 def tool_summarize(text: str) -> str:
-    """Résume un texte (version simplifiée)."""
+    """Summarize a text (simplified version)."""
     sentences = text.split('.')
-    # Prendre les 2 premières phrases
+    # Take the first 2 sentences
     summary = '. '.join(sentences[:2]) + '.'
-    return f"Résumé : {summary}"
+    return f"Summary: {summary}"
 
 
 # ============================================================================
-# PARTIE 3 : AGENT REACT (Chapitre 14)
+# PART 3: REACT AGENT (Chapter 14)
 # ============================================================================
 
 class ReActAgent:
     """
-    Agent autonome avec pattern ReAct (Reason + Act).
+    Autonomous agent with ReAct pattern (Reason + Act).
     
-    Boucle : Thought → Action → Observation → ... → Final Answer
+    Loop: Thought → Action → Observation → ... → Final Answer
     """
     
     def __init__(self, rag_system: RAGSystem, use_real_llm: bool = False):
@@ -232,92 +232,92 @@ class ReActAgent:
         self.history: List[Dict[str, str]] = []
         self.use_real_llm = use_real_llm
         
-        # Enregistrement des outils
+        # Register tools
         self._register_tools()
     
     def _register_tools(self):
-        """Enregistrer tous les outils disponibles."""
+        """Register all available tools."""
         self.tools.register(
             "calculator",
-            "Évalue une expression mathématique (ex: 2+2, 5*3)",
+            "Evaluates a mathematical expression (e.g.: 2+2, 5*3)",
             tool_calculator
         )
         
         self.tools.register(
             "search",
-            "Recherche dans la base de connaissances",
+            "Search in the knowledge base",
             lambda query: tool_search_knowledge(query, self.rag_system)
         )
         
         self.tools.register(
             "current_time",
-            "Retourne la date et l'heure actuelles",
+            "Returns the current date and time",
             tool_current_time
         )
         
         self.tools.register(
             "summarize",
-            "Résume un texte long",
+            "Summarizes a long text",
             tool_summarize
         )
     
     def _simulate_llm_reasoning(self, prompt: str, step_count: int = 1) -> str:
         """
-        Simuler un LLM (mode standalone).
+        Simulate an LLM (standalone mode).
         
-        En production, remplacer par un appel à OpenAI, Claude, etc.
-        Après 1-2 itérations, retourner une réponse finale pour éviter les boucles infinies.
+        In production, replace with a call to OpenAI, Claude, etc.
+        After 1-2 iterations, return a final answer to avoid infinite loops.
         """
-        # Détection de patterns simples pour la démo
+        # Simple pattern detection for demo
         prompt_lower = prompt.lower()
         
-        # Pattern : question mathématique
+        # Pattern: math question
         if any(op in prompt_lower for op in ['calcul', 'combien', '+', '*', '/', '-']):
-            # Extraire l'expression mathématique
+            # Extract the math expression
             match = re.search(r'(\d+\s*[+\-*/]\s*\d+)', prompt)
             if match:
                 expr = match.group(1)
-                # Première itération : appeler la calculatrice
+                # First iteration: call the calculator
                 if step_count <= 1:
-                    return f"Thought: Je dois calculer {expr}\nAction: calculator(expression='{expr}')"
+                    return f"Thought: I need to calculate {expr}\nAction: calculator(expression='{expr}')"
                 else:
-                    # Itération suivante : donner la réponse finale
+                    # Next iteration: give the final answer
                     try:
                         result = eval(expr)
-                        return f"Thought: J'ai obtenu le résultat du calcul.\nFinal Answer: Le résultat de {expr} est {result}."
+                        return f"Thought: I got the result of the calculation.\nFinal Answer: The result of {expr} is {result}."
                     except:
-                        return "Thought: J'ai la réponse.\nFinal Answer: Le calcul a été effectué avec succès."
+                        return "Thought: I have the answer.\nFinal Answer: The calculation was performed successfully."
         
-        # Pattern : recherche d'information
+        # Pattern: information search
         if any(word in prompt_lower for word in ['qu\'est-ce', 'définition', 'explique', 'parle-moi', 'qu est ce']):
-            # Extraire le sujet
+            # Extract the subject
             for keyword in ['transformer', 'attention', 'llm', 'rag', 'agent', 'lora']:
                 if keyword in prompt_lower:
                     if step_count <= 1:
-                        return f"Thought: Je dois chercher des informations sur {keyword}\nAction: search(query='{keyword}')"
+                        return f"Thought: I need to search for information about {keyword}\nAction: search(query='{keyword}')"
                     else:
-                        return f"Thought: J'ai trouvé des informations pertinentes sur {keyword}.\nFinal Answer: Les documents pertinents expliquent les concepts clés sur le sujet. Selon la base de connaissances, {keyword.upper()} est un concept important couvert en détail."
+                        return f"Thought: I found relevant information about {keyword}.\nFinal Answer: The relevant documents explain the key concepts on the topic. According to the knowledge base, {keyword.upper()} is an important concept covered in detail."
         
-        # Pattern : heure/date
+        # Pattern: time/date
         if any(word in prompt_lower for word in ['heure', 'date', 'aujourd\'hui', 'maintenant', 'quelle heure']):
             if step_count <= 1:
-                return "Thought: Je dois obtenir l'heure actuelle\nAction: current_time()"
+                return "Thought: I need to get the current time\nAction: current_time()"
             else:
-                return "Thought: J'ai l'heure actuelle.\nFinal Answer: L'heure a été obtenue avec succès."
+                return "Thought: I have the current time.\nFinal Answer: The time was retrieved successfully."
         
-        # Par défaut : recherche générique
+        # Default: generic search
         if step_count <= 1:
-            return f"Thought: Je vais chercher des informations sur cette question\nAction: search(query='{prompt[:50]}')"
+            return f"Thought: I will search for information about this question\nAction: search(query='{prompt[:50]}')"
         else:
-            return "Thought: J'ai exploré la base de connaissances.\nFinal Answer: Basé sur les documents trouvés, voici ce que j'ai pu déterminer sur votre question."
+            return "Thought: I have explored the knowledge base.\nFinal Answer: Based on the documents found, here is what I could determine about your question."
     
     def _call_real_llm(self, prompt: str) -> str:
         """
-        Appeler un vrai LLM (OpenAI, Claude, etc.).
+        Call a real LLM (OpenAI, Claude, etc.).
         
-        À décommenter et configurer en production.
+        Uncomment and configure in production.
         """
-        # Exemple avec OpenAI :
+        # Example with OpenAI:
         # from openai import OpenAI
         # client = OpenAI()
         # response = client.chat.completions.create(
@@ -327,13 +327,13 @@ class ReActAgent:
         # )
         # return response.choices[0].message.content
         
-        raise NotImplementedError("Configuration LLM requise")
+        raise NotImplementedError("LLM configuration required")
     
     def _parse_action(self, response: str) -> Optional[Tuple[str, Dict[str, str]]]:
         """
-        Parser la réponse du LLM pour extraire l'action.
+        Parse the LLM response to extract the action.
         
-        Format attendu : Action: tool_name(param1='val1', param2='val2')
+        Expected format: Action: tool_name(param1='val1', param2='val2')
         """
         action_match = re.search(r"Action:\s*(\w+)\((.*?)\)", response)
         
@@ -357,28 +357,28 @@ class ReActAgent:
     
     def run(self, question: str, max_iterations: int = 5, verbose: bool = True) -> Dict[str, Any]:
         """
-        Exécuter l'agent sur une question.
+        Execute the agent on a question.
         
         Returns:
-            Dict avec 'answer', 'steps', 'confidence'
+            Dict with 'answer', 'steps', 'confidence'
         """
         if verbose:
             print(f"\n{'='*70}")
-            print(f"🤖 Question : {question}")
+            print(f"🤖 Question: {question}")
             print(f"{'='*70}")
         
-        context = f"Question utilisateur : {question}\n\n{self.tools.get_tools_description()}\n"
+        context = f"User question: {question}\n\n{self.tools.get_tools_description()}\n"
         steps = []
         
         for iteration in range(1, max_iterations + 1):
             if verbose:
                 print(f"\n{'─'*70}")
-                print(f"⏳ Itération {iteration}/{max_iterations}")
+                print(f"⏳ Iteration {iteration}/{max_iterations}")
                 print(f"{'─'*70}")
             
-            # 1. Pensée (Thought) - Appel au LLM
+            # 1. Thought - LLM call
             prompt = context + "\n".join([
-                f"Étape {s['iteration']}: {s['thought']}\nAction: {s['action']}\nObservation: {s['observation']}"
+                f"Step {s['iteration']}: {s['thought']}\nAction: {s['action']}\nObservation: {s['observation']}"
                 for s in steps
             ])
             
@@ -387,18 +387,18 @@ class ReActAgent:
             else:
                 llm_response = self._simulate_llm_reasoning(question, step_count=iteration)
             
-            # Extraire la pensée
+            # Extract the thought
             thought_match = re.search(r"Thought:\s*(.+?)(?:\n|$)", llm_response)
-            thought = thought_match.group(1) if thought_match else "Analyse en cours..."
+            thought = thought_match.group(1) if thought_match else "Analysis in progress..."
             
             if verbose:
-                print(f"💭 Pensée : {thought}")
+                print(f"💭 Thought: {thought}")
             
-            # 2. Vérifier si réponse finale
+            # 2. Check if final answer
             if "final answer:" in llm_response.lower():
                 answer = llm_response.split("Final Answer:", 1)[1].strip() if "Final Answer:" in llm_response else llm_response.split("final answer:", 1)[1].strip()
                 if verbose:
-                    print(f"\n✅ Réponse finale : {answer}")
+                    print(f"\n✅ Final Answer: {answer}")
                 
                 return {
                     "answer": answer,
@@ -407,27 +407,27 @@ class ReActAgent:
                     "confidence": self._calculate_confidence(steps)
                 }
             
-            # 3. Parser et exécuter l'action
+            # 3. Parse and execute the action
             action_parsed = self._parse_action(llm_response)
             
             if not action_parsed:
                 if verbose:
-                    print("⚠️ Pas d'action détectée")
+                    print("⚠️ No action detected")
                 continue
             
             tool_name, params = action_parsed
             action_str = f"{tool_name}({', '.join(f'{k}={v}' for k, v in params.items())})"
             
             if verbose:
-                print(f"🔧 Action : {action_str}")
+                print(f"🔧 Action: {action_str}")
             
-            # 4. Observation - Exécution de l'outil
+            # 4. Observation - Tool execution
             observation = self.tools.execute(tool_name, **params)
             
             if verbose:
-                print(f"📊 Observation : {observation[:200]}...")
+                print(f"📊 Observation: {observation[:200]}...")
             
-            # Sauvegarder l'étape
+            # Save the step
             steps.append({
                 "iteration": iteration,
                 "thought": thought,
@@ -435,11 +435,11 @@ class ReActAgent:
                 "observation": observation
             })
             
-            # Mettre à jour le contexte
-            context += f"\nÉtape {iteration}:\nPensée: {thought}\nAction: {action_str}\nObservation: {observation}\n"
+            # Update the context
+            context += f"\nStep {iteration}:\nThought: {thought}\nAction: {action_str}\nObservation: {observation}\n"
         
-        # Max iterations atteint
-        final_answer = "Impossible de répondre dans le nombre d'itérations autorisé."
+        # Max iterations reached
+        final_answer = "Unable to answer within the allowed number of iterations."
         
         return {
             "answer": final_answer,
@@ -450,10 +450,10 @@ class ReActAgent:
     
     def _calculate_confidence(self, steps: List[Dict]) -> float:
         """
-        Calculer un score de confiance basé sur les étapes.
+        Calculate a confidence score based on the steps.
         
-        Heuristique simple : plus d'étapes réussies = plus de confiance.
-        En production, utiliser des métriques plus sophistiquées.
+        Simple heuristic: more successful steps = more confidence.
+        In production, use more sophisticated metrics.
         """
         if not steps:
             return 0.0
@@ -467,11 +467,11 @@ class ReActAgent:
 
 
 # ============================================================================
-# PARTIE 4 : ÉVALUATION (Chapitres 12, 15)
+# PART 4: EVALUATION (Chapters 12, 15)
 # ============================================================================
 
 class AssistantEvaluator:
-    """Évaluation de la qualité des réponses de l'assistant."""
+    """Evaluation of the quality of assistant responses."""
     
     @staticmethod
     def evaluate_response(
@@ -480,13 +480,13 @@ class AssistantEvaluator:
         expected_answer: Optional[str] = None
     ) -> Dict[str, Any]:
         """
-        Évaluer une réponse de l'assistant.
+        Evaluate an assistant response.
         
-        Métriques :
-            - Iterations utilisées
+        Metrics:
+            - Iterations used
             - Confidence score
-            - Latence (simulée)
-            - Cohérence (si réponse attendue fournie)
+            - Latency (simulated)
+            - Coherence (if expected answer provided)
         """
         evaluation = {
             "question": question,
@@ -496,9 +496,9 @@ class AssistantEvaluator:
             "success": response["confidence"] > 0.5
         }
         
-        # Évaluation de cohérence (si réponse attendue)
+        # Coherence evaluation (if expected answer provided)
         if expected_answer:
-            # Similarité simple basée sur mots communs
+            # Simple similarity based on common words
             answer_words = set(response["answer"].lower().split())
             expected_words = set(expected_answer.lower().split())
             
@@ -518,19 +518,19 @@ class AssistantEvaluator:
         num_samples: int = 3
     ) -> Dict[str, Any]:
         """
-        Vérifier la cohérence des réponses (self-consistency).
+        Check response consistency (self-consistency).
         
-        Génère plusieurs réponses et mesure leur accord.
-        Concept du chapitre 12.
+        Generates multiple responses and measures their agreement.
+        Concept from chapter 12.
         """
         print(f"\n{'='*70}")
-        print(f"🔬 Test de self-consistency ({num_samples} échantillons)")
+        print(f"🔬 Self-consistency test ({num_samples} samples)")
         print(f"{'='*70}")
         
         answers = []
         
         for i in range(num_samples):
-            print(f"\nÉchantillon {i+1}/{num_samples}...")
+            print(f"\nSample {i+1}/{num_samples}...")
             response = agent.run(question, verbose=False)
             answers.append(response["answer"])
         
@@ -552,67 +552,67 @@ class AssistantEvaluator:
 
 
 # ============================================================================
-# PARTIE 5 : DÉMONSTRATION & MAIN
+# PART 5: DEMONSTRATION & MAIN
 # ============================================================================
 
 def initialize_knowledge_base() -> RAGSystem:
-    """Initialiser une base de connaissances avec des documents de démo."""
+    """Initialize a knowledge base with demo documents."""
     rag = RAGSystem()
     
-    # Documents sur les LLMs et l'IA
+    # Documents about LLMs and AI
     documents = [
         {
             "content": """
-Les Transformers sont une architecture de réseaux de neurones introduite en 2017.
-Ils utilisent un mécanisme d'attention qui permet de traiter tous les tokens en parallèle,
-contrairement aux RNN qui traitent séquentiellement. Les Transformers sont la base
-de tous les LLMs modernes comme GPT, BERT, LLaMA, Claude et Mistral.
-L'architecture comprend un encodeur et un décodeur, bien que les LLMs modernes
-utilisent souvent seulement la partie décodeur.
+Transformers are a neural network architecture introduced in 2017.
+They use an attention mechanism that allows processing all tokens in parallel,
+unlike RNNs which process sequentially. Transformers are the foundation
+of all modern LLMs such as GPT, BERT, LLaMA, Claude, and Mistral.
+The architecture includes an encoder and a decoder, although modern LLMs
+often use only the decoder part.
             """,
-            "metadata": {"title": "Architecture Transformer", "chapter": 3}
+            "metadata": {"title": "Transformer Architecture", "chapter": 3}
         },
         {
             "content": """
-Le RAG (Retrieval-Augmented Generation) est une technique qui combine la recherche
-d'information avec la génération de texte. Avant de répondre à une question, le système
-recherche d'abord des documents pertinents dans une base de connaissances, puis utilise
-ces documents comme contexte pour générer une réponse plus précise et factuelle.
-Le RAG permet de réduire les hallucinations et de mettre à jour les connaissances
-sans réentraîner le modèle.
+RAG (Retrieval-Augmented Generation) is a technique that combines information
+retrieval with text generation. Before answering a question, the system
+first searches for relevant documents in a knowledge base, then uses
+these documents as context to generate a more accurate and factual response.
+RAG helps reduce hallucinations and update knowledge
+without retraining the model.
             """,
-            "metadata": {"title": "RAG et systèmes augmentés", "chapter": 13}
+            "metadata": {"title": "RAG and Augmented Systems", "chapter": 13}
         },
         {
             "content": """
-Les agents autonomes utilisent le pattern ReAct (Reason + Act) pour résoudre des problèmes
-complexes. L'agent entre dans une boucle itérative : il réfléchit (Thought), décide d'une
-action à effectuer (Action), observe le résultat (Observation), puis recommence jusqu'à
-trouver la réponse. Les agents peuvent utiliser des outils externes comme des calculatrices,
-des API ou des bases de données. Le Model Context Protocol (MCP) standardise la manière
-dont ces outils sont intégrés.
+Autonomous agents use the ReAct (Reason + Act) pattern to solve complex
+problems. The agent enters an iterative loop: it thinks (Thought), decides on
+an action to perform (Action), observes the result (Observation), then repeats until
+finding the answer. Agents can use external tools such as calculators,
+APIs, or databases. The Model Context Protocol (MCP) standardizes how
+these tools are integrated.
             """,
-            "metadata": {"title": "Agents autonomes", "chapter": 14}
+            "metadata": {"title": "Autonomous Agents", "chapter": 14}
         },
         {
             "content": """
-L'évaluation des LLMs utilise plusieurs métriques. Pass@k mesure la probabilité de succès
-en k tentatives. La self-consistency vérifie si le modèle donne la même réponse plusieurs fois.
-La perplexité mesure la qualité de la prédiction du prochain token. Pour les agents,
-on évalue le taux de succès, le nombre d'itérations et la robustesse aux erreurs.
-Les benchmarks comme HumanEval (code) et MMLU (connaissances générales) sont standards.
+LLM evaluation uses several metrics. Pass@k measures the probability of success
+in k attempts. Self-consistency checks if the model gives the same answer multiple times.
+Perplexity measures the quality of next token prediction. For agents,
+we evaluate success rate, number of iterations, and robustness to errors.
+Benchmarks like HumanEval (code) and MMLU (general knowledge) are standard.
             """,
-            "metadata": {"title": "Évaluation des LLMs", "chapter": 12}
+            "metadata": {"title": "LLM Evaluation", "chapter": 12}
         },
         {
             "content": """
-LoRA (Low-Rank Adaptation) est une technique de fine-tuning efficace qui gèle le modèle
-de base et ajoute de petites matrices entraînables. Cela réduit drastiquement le nombre
-de paramètres à entraîner (souvent moins de 1% du modèle total). QLoRA combine LoRA
-avec la quantification 4-bit, permettant de fine-tuner des modèles de 65B paramètres
-sur une seule carte GPU grand public. Ces techniques ont démocratisé l'accès au fine-tuning.
+LoRA (Low-Rank Adaptation) is an efficient fine-tuning technique that freezes the base
+model and adds small trainable matrices. This drastically reduces the number
+of parameters to train (often less than 1% of the total model). QLoRA combines LoRA
+with 4-bit quantization, enabling fine-tuning of 65B parameter models
+on a single consumer GPU. These techniques have democratized access to fine-tuning.
             """,
-            "metadata": {"title": "LoRA et QLoRA", "chapter": 9}
+            "metadata": {"title": "LoRA and QLoRA", "chapter": 9}
         }
     ]
     
@@ -625,40 +625,40 @@ sur une seule carte GPU grand public. Ces techniques ont démocratisé l'accès 
 
 
 def run_demo():
-    """Démonstration complète du mini-assistant."""
+    """Complete demonstration of the mini-assistant."""
     print("\n" + "="*70)
-    print("🚀 MINI-ASSISTANT COMPLET - PROJET INTÉGRATEUR")
+    print("🚀 COMPLETE MINI-ASSISTANT - INTEGRATIVE PROJECT")
     print("="*70)
-    print("\nCe projet combine :")
-    print("  • RAG (Chapitre 13) : Recherche de documents")
-    print("  • Agents ReAct (Chapitre 14) : Boucle autonome")
-    print("  • Prompting (Chapitre 11) : Génération structurée")
-    print("  • Évaluation (Chapitres 12, 15) : Métriques de qualité")
+    print("\nThis project combines:")
+    print("  • RAG (Chapter 13): Document retrieval")
+    print("  • ReAct Agents (Chapter 14): Autonomous loop")
+    print("  • Prompting (Chapter 11): Structured generation")
+    print("  • Evaluation (Chapters 12, 15): Quality metrics")
     
-    # Phase 1 : Initialisation
+    # Phase 1: Initialization
     print("\n" + "="*70)
-    print("📚 Phase 1 : Initialisation de la base de connaissances")
+    print("📚 Phase 1: Initializing the knowledge base")
     print("="*70)
     
     rag_system = initialize_knowledge_base()
     
-    # Phase 2 : Création de l'agent
+    # Phase 2: Creating the agent
     print("\n" + "="*70)
-    print("🤖 Phase 2 : Création de l'agent")
+    print("🤖 Phase 2: Creating the agent")
     print("="*70)
     
     agent = ReActAgent(rag_system, use_real_llm=False)
-    print(f"✓ Agent créé avec {len(agent.tools.tools)} outils")
+    print(f"✓ Agent created with {len(agent.tools.tools)} tools")
     
-    # Phase 3 : Questions de test
+    # Phase 3: Test questions
     print("\n" + "="*70)
-    print("💬 Phase 3 : Questions de test")
+    print("💬 Phase 3: Test questions")
     print("="*70)
     
     test_questions = [
-        "Qu'est-ce qu'un Transformer ?",
-        "Combien font 15 * 8 ?",
-        "Explique-moi le RAG",
+        "What is a Transformer?",
+        "What is 15 * 8?",
+        "Explain RAG to me",
     ]
     
     results = []
@@ -679,65 +679,65 @@ def run_demo():
             "evaluation": evaluation
         })
     
-    # Phase 4 : Rapport d'évaluation
+    # Phase 4: Evaluation report
     print("\n" + "="*70)
-    print("📊 Phase 4 : Rapport d'évaluation")
+    print("📊 Phase 4: Evaluation report")
     print("="*70)
     
-    print("\nRésumé des performances :")
+    print("\nPerformance summary:")
     print("-" * 70)
     
     for i, result in enumerate(results, 1):
         eval_data = result["evaluation"]
-        print(f"\nQuestion {i} : {result['question'][:50]}...")
-        print(f"  • Itérations : {eval_data['iterations']}")
-        print(f"  • Confiance : {eval_data['confidence']:.2%}")
-        print(f"  • Succès : {'✅' if eval_data['success'] else '❌'}")
+        print(f"\nQuestion {i}: {result['question'][:50]}...")
+        print(f"  • Iterations: {eval_data['iterations']}")
+        print(f"  • Confidence: {eval_data['confidence']:.2%}")
+        print(f"  • Success: {'✅' if eval_data['success'] else '❌'}")
     
-    # Statistiques globales
+    # Global statistics
     avg_iterations = np.mean([r["evaluation"]["iterations"] for r in results])
     avg_confidence = np.mean([r["evaluation"]["confidence"] for r in results])
     success_rate = np.mean([r["evaluation"]["success"] for r in results])
     
     print("\n" + "="*70)
-    print("📈 Statistiques globales")
+    print("📈 Global statistics")
     print("="*70)
-    print(f"  • Nombre de questions : {len(results)}")
-    print(f"  • Itérations moyennes : {avg_iterations:.1f}")
-    print(f"  • Confiance moyenne : {avg_confidence:.2%}")
-    print(f"  • Taux de succès : {success_rate:.2%}")
+    print(f"  • Number of questions: {len(results)}")
+    print(f"  • Average iterations: {avg_iterations:.1f}")
+    print(f"  • Average confidence: {avg_confidence:.2%}")
+    print(f"  • Success rate: {success_rate:.2%}")
     
-    # Phase 5 : Test de self-consistency (optionnel)
+    # Phase 5: Self-consistency test (optional)
     print("\n" + "="*70)
-    print("🔬 Phase 5 : Test de self-consistency (BONUS)")
+    print("🔬 Phase 5: Self-consistency test (BONUS)")
     print("="*70)
-    print("\nCe test génère plusieurs réponses pour la même question")
-    print("et mesure leur cohérence (concept du chapitre 12).")
+    print("\nThis test generates multiple responses for the same question")
+    print("and measures their consistency (concept from chapter 12).")
     
     consistency_test = evaluator.self_consistency_check(
         agent,
-        "Qu'est-ce que le RAG ?",
+        "What is RAG?",
         num_samples=3
     )
     
-    print(f"\nRésultats :")
-    print(f"  • Réponse majoritaire : {consistency_test['most_common_answer'][:80]}...")
-    print(f"  • Score de cohérence : {consistency_test['consistency_score']:.2%}")
-    print(f"  • Réponses uniques : {consistency_test['unique_answers']}/{consistency_test['num_samples']}")
+    print(f"\nResults:")
+    print(f"  • Majority answer: {consistency_test['most_common_answer'][:80]}...")
+    print(f"  • Consistency score: {consistency_test['consistency_score']:.2%}")
+    print(f"  • Unique answers: {consistency_test['unique_answers']}/{consistency_test['num_samples']}")
     
     # Conclusion
     print("\n" + "="*70)
-    print("✅ DÉMONSTRATION TERMINÉE")
+    print("✅ DEMONSTRATION COMPLETE")
     print("="*70)
-    print("\n💡 Points d'extension pour les étudiants :")
-    print("  1. Intégrer un vrai LLM (OpenAI, Claude, Ollama)")
-    print("  2. Ajouter de nouveaux outils (météo, actualités, etc.)")
-    print("  3. Persister les conversations dans une base de données")
-    print("  4. Créer une interface web avec Streamlit ou Gradio")
-    print("  5. Implémenter des métriques d'évaluation plus avancées")
-    print("  6. Ajouter du logging et du monitoring en production")
-    print("  7. Gérer les erreurs et timeouts plus robustement")
-    print("\n📖 Référence : Voir chapitres 11-15 du livre pour les concepts détaillés.")
+    print("\n💡 Extension points for students:")
+    print("  1. Integrate a real LLM (OpenAI, Claude, Ollama)")
+    print("  2. Add new tools (weather, news, etc.)")
+    print("  3. Persist conversations in a database")
+    print("  4. Create a web interface with Streamlit or Gradio")
+    print("  5. Implement more advanced evaluation metrics")
+    print("  6. Add logging and monitoring for production")
+    print("  7. Handle errors and timeouts more robustly")
+    print("\n📖 Reference: See chapters 11-15 of the book for detailed concepts.")
     print()
 
 

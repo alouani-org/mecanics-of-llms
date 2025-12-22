@@ -1,16 +1,16 @@
 #!/usr/bin/env python
 """
-Script 2 : Self-Attention et Multi-Head (Chapitre 3).
+Script 2: Self-Attention and Multi-Head (Chapter 3).
 
-Ce script simule une couche d'attention multi-tête minimale, permettant de :
-- Comprendre les projections Q, K, V.
-- Voir comment chaque tête focalise sur différentes dépendances.
-- Vérifier que les poids d'attention somment à 1 (distribution de probabilité).
+This script simulates a minimal multi-head attention layer, allowing you to:
+- Understand Q, K, V projections.
+- See how each head focuses on different dependencies.
+- Verify that attention weights sum to 1 (probability distribution).
 
-Dépendances :
+Dependencies:
     pip install torch numpy
 
-Utilisation :
+Usage:
     python 02_multihead_attention.py
 """
 
@@ -20,28 +20,28 @@ import numpy as np
 
 
 def main():
-    # Paramètres
+    # Parameters
     batch_size = 1
-    seq_len = 4        # Longueur de séquence ("Le chat dort bien")
-    d_model = 64       # Dimension du modèle
-    num_heads = 2      # Nombre de têtes d'attention
+    seq_len = 4        # Sequence length ("The cat sleeps well")
+    d_model = 64       # Model dimension
+    num_heads = 2      # Number of attention heads
     d_head = d_model // num_heads
 
     print("=" * 60)
-    print("MULTI-HEAD ATTENTION (SIMULATION SIMPLIFIÉE)")
+    print("MULTI-HEAD ATTENTION (SIMPLIFIED SIMULATION)")
     print("=" * 60 + "\n")
 
-    # Exemple concret avec noms de tokens
-    token_names = ["Le", "chat", "dort", "bien"]
-    print(f"Phrase d'exemple: {' '.join(token_names)}\n")
+    # Concrete example with token names
+    token_names = ["The", "cat", "sleeps", "well"]
+    print(f"Example sentence: {' '.join(token_names)}\n")
 
-    # Créer une séquence d'embeddings (simulée)
-    # En pratique, ce sont les sorties des couches précédentes
+    # Create a sequence of embeddings (simulated)
+    # In practice, these are outputs from previous layers
     x = torch.randn(batch_size, seq_len, d_model)
-    print(f"Entrée x shape: {x.shape}")
+    print(f"Input x shape: {x.shape}")
     print(f"  (batch={batch_size}, seq_len={seq_len}, d_model={d_model})\n")
 
-    # Projections linéaires pour Q, K, V
+    # Linear projections for Q, K, V
     W_q = torch.randn(d_model, d_model)
     W_k = torch.randn(d_model, d_model)
     W_v = torch.randn(d_model, d_model)
@@ -52,9 +52,9 @@ def main():
 
     print(f"Q, K, V shapes: {Q.shape}\n")
 
-    # Calcul de l'attention par tête
+    # Compute attention per head
     print("=" * 60)
-    print("CALCUL DE L'ATTENTION PAR TÊTE")
+    print("ATTENTION COMPUTATION PER HEAD")
     print("=" * 60 + "\n")
 
     attention_outputs = []
@@ -72,32 +72,32 @@ def main():
 
         attention_outputs.append(output_h)
 
-        print(f"Tête {head_idx}:")
-        print(f"  Scores (bruts): shape {scores.shape}")
-        print(f"  Poids d'attention (après softmax):")
+        print(f"Head {head_idx}:")
+        print(f"  Scores (raw): shape {scores.shape}")
+        print(f"  Attention weights (after softmax):")
         print(f"    {attention_weights[0].detach().numpy()}")
-        print(f"  Somme des poids pour chaque token:")
+        print(f"  Sum of weights for each token:")
         print(f"    {attention_weights[0].sum(dim=1).detach().numpy()}")
-        print(f"  (Vérification: chaque ligne doit sommer à ~1.0)")
+        print(f"  (Verification: each row should sum to ~1.0)")
         print()
 
-    # Concaténer toutes les têtes
+    # Concatenate all heads
     output = torch.cat(attention_outputs, dim=-1)  # [batch, seq_len, d_model]
 
     print("=" * 60)
-    print("RÉSULTAT FINAL")
+    print("FINAL RESULT")
     print("=" * 60 + "\n")
-    print(f"Sortie concaténée: {output.shape}")
-    print(f"(Les {num_heads} têtes sont réunies pour un vecteur final par token)")
+    print(f"Concatenated output: {output.shape}")
+    print(f"(The {num_heads} heads are combined into a final vector per token)")
 
     print("\n💡 INTUITION:")
-    print("  • Chaque tête capture DIFFÉRENTES dépendances dans la phrase.")
-    print(f"  • Avec nos tokens {token_names}:")
-    print("    - Tête 0 peut se concentrer sur 'Le → chat' (sujet-verbe).")
-    print("    - Tête 1 peut se concentrer sur 'chat → dort' (verbe-adverbe).")
-    print("  • La fusion permet au modèle de combiner ces perspectives.")
-    print(f"\n  Observation: Chaque tête assigne des poids d'attention différents.")
-    print(f"  Exemple avec {token_names[1]} (token 1):")
+    print("  • Each head captures DIFFERENT dependencies in the sentence.")
+    print(f"  • With our tokens {token_names}:")
+    print("    - Head 0 may focus on 'The → cat' (subject-verb).")
+    print("    - Head 1 may focus on 'cat → sleeps' (verb-adverb).")
+    print("  • The fusion allows the model to combine these perspectives.")
+    print(f"\n  Observation: Each head assigns different attention weights.")
+    print(f"  Example with {token_names[1]} (token 1):")
     print(f"    - Tête 0: 'chat' regarde surtout vers 'Le' et 'dort'")
     print(f"    - Tête 1: 'chat' regarde plus vers 'bien'")
     print(f"  → Perspectives complémentaires = représentation riche!")

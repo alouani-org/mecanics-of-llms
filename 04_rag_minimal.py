@@ -1,16 +1,16 @@
 #!/usr/bin/env python
 """
-Script 4 : RAG Minimaliste (Chapitre 13).
+Script 4: Minimal RAG (Chapter 13).
 
-Ce script simule un pipeline RAG complet et simple :
-1. Retrieval : chercher les documents les plus similaires.
-2. Augmentation : injecter ces documents dans le contexte.
-3. Génération : le LLM utilise le contexte pour répondre.
+This script simulates a complete and simple RAG pipeline:
+1. Retrieval: search for the most similar documents.
+2. Augmentation: inject these documents into the context.
+3. Generation: the LLM uses the context to respond.
 
-Dépendances :
+Dependencies:
     pip install scikit-learn numpy
 
-Utilisation :
+Usage:
     python 04_rag_minimal.py
 """
 
@@ -20,58 +20,66 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 
 def main():
-    # Mini-base de connaissances (knowledge base)
+    # Mini knowledge base
     documents = [
-        "Le Transformer est une architecture basée sur l'attention multi-tête.",
-        "La tokenisation convertit le texte en jetons (tokens).",
-        "Le Transformer a été introduit en 2017 par Vaswani et ses collègues.",
-        "L'attention multi-tête permet au modèle de regarder différentes représentations.",
-        "Le BERT utilise des embeddings positionnels pour coder l'ordre des mots.",
-        "La perplexité mesure à quel point un modèle est 'surpris' par un texte.",
-        "Les LLMs modernes utilisent le décodage par paquets (beam search) ou par échantillonnage.",
+        "The Transformer is an architecture based on multi-head attention.",
+        "Tokenization converts text into tokens.",
+        "The Transformer was introduced in 2017 by Vaswani and colleagues.",
+        "Multi-head attention allows the model to look at different representations.",
+        "BERT uses positional embeddings to encode word order.",
+        "Perplexity measures how 'surprised' a model is by a text.",
+        "Modern LLMs use beam search decoding or sampling.",
     ]
 
-    # Question de l'utilisateur
-    question = "Comment fonctionne l'attention dans le Transformer?"
+    # User question
+    question = "How does attention work in the Transformer?"
 
     print("=" * 70)
-    print("RAG MINIMALISTE")
+    print("MINIMAL RAG")
     print("=" * 70 + "\n")
 
-    print(f"Question utilisateur: '{question}'\n")
+    print(f"User question: '{question}'\n")
 
-    # 1. Vectorisation (TF-IDF pour la simplicité)
+    # 1. Vectorization (TF-IDF for simplicity)
     print("=" * 70)
-    print("ÉTAPE 1 : RETRIEVAL (Recherche des documents pertinents)")
+    print("STEP 1: RETRIEVAL (Search for relevant documents)")
     print("=" * 70 + "\n")
 
-    # Combiner documents et question pour vectoriser
+    # Combine documents and question for vectorization
     all_texts = documents + [question]
 
-    # TF-IDF : transformer les textes en vecteurs
-    # Stop words français courants (amélioration de la qualité)
-    french_stop_words = [
-        "le", "la", "de", "du", "et", "les", "un", "une", "des",
-        "est", "être", "en", "à", "au", "par", "pour", "ce", "cette",
-        "cet", "qui", "que", "quoi", "dont", "donc", "mais", "ou", "où"
+    # TF-IDF: transform texts into vectors
+    # Common English stop words (improves quality)
+    english_stop_words = [
+        "the", "a", "an", "is", "are", "was", "were", "be", "been",
+        "being", "have", "has", "had", "do", "does", "did", "will",
+        "would", "could", "should", "may", "might", "must", "shall",
+        "can", "need", "dare", "to", "of", "in", "for", "on", "with",
+        "at", "by", "from", "as", "into", "through", "during", "before",
+        "after", "above", "below", "between", "under", "again", "further",
+        "then", "once", "here", "there", "when", "where", "why", "how",
+        "all", "each", "few", "more", "most", "other", "some", "such",
+        "no", "nor", "not", "only", "own", "same", "so", "than", "too",
+        "very", "just", "and", "but", "if", "or", "because", "until",
+        "while", "although", "this", "that", "these", "those"
     ]
     vectorizer = TfidfVectorizer(
-        lowercase=True, stop_words=french_stop_words
+        lowercase=True, stop_words=english_stop_words
     )
     tfidf_matrix = vectorizer.fit_transform(all_texts)
 
-    # Vecteur de la question (dernier indice)
+    # Question vector (last index)
     question_vector = tfidf_matrix[-1]
     doc_vectors = tfidf_matrix[:-1]
 
-    # 2. Calcul de similarité (cosine similarity)
+    # 2. Similarity calculation (cosine similarity)
     similarities = cosine_similarity(question_vector, doc_vectors)[0]
 
-    # 3. Récupérer les top-k documents pertinents
+    # 3. Retrieve top-k relevant documents
     k = 3
     top_k_indices = np.argsort(similarities)[::-1][:k]
 
-    print(f"Top {k} documents récupérés (par score de similarité cosinus):\n")
+    print(f"Top {k} documents retrieved (by cosine similarity score):\n")
 
     for rank, idx in enumerate(top_k_indices, 1):
         score = similarities[idx]
@@ -79,88 +87,88 @@ def main():
         print(f"{rank}. Score: {score:.3f}")
         print(f"   {doc}\n")
 
-    # 4. Construction du prompt augmenté
+    # 4. Build augmented prompt
     print("\n" + "=" * 70)
-    print("ÉTAPE 2 : AUGMENTATION (Injection du contexte)")
+    print("STEP 2: AUGMENTATION (Context injection)")
     print("=" * 70 + "\n")
 
     context = "\n".join(
         [f"- {documents[i]}" for i in top_k_indices]
     )
 
-    augmented_prompt = f"""Vous êtes un assistant expert en Machine Learning.
+    augmented_prompt = f"""You are an expert Machine Learning assistant.
 
-Voici des documents pertinents:
+Here are relevant documents:
 {context}
 
 Question: {question}
 
-Réponse basée sur les documents:"""
+Answer based on the documents:"""
 
-    print("Prompt augmenté envoyé au LLM:")
+    print("Augmented prompt sent to LLM:")
     print("-" * 70)
     print(augmented_prompt)
     print("-" * 70)
 
-    # 5. Génération (simulée)
+    # 5. Generation (simulated)
     print("\n" + "=" * 70)
-    print("ÉTAPE 3 : GÉNÉRATION (Le LLM répond)")
+    print("STEP 3: GENERATION (The LLM responds)")
     print("=" * 70 + "\n")
 
-    simulated_response = """L'attention dans le Transformer fonctionne en plusieurs étapes :
+    simulated_response = """Attention in the Transformer works in several steps:
 
-1. **Projections Q, K, V** : Chaque jeton est projeté en trois représentations
+1. **Q, K, V Projections**: Each token is projected into three representations
    (Query, Key, Value).
 
-2. **Calcul des scores** : On calcule Q @ K^T pour voir "qui regarde qui".
+2. **Score calculation**: We compute Q @ K^T to see "who looks at whom".
 
-3. **Normalisation** : On applique softmax pour obtenir des poids entre 0 et 1.
+3. **Normalization**: We apply softmax to get weights between 0 and 1.
 
-4. **Agrégation** : On utilise ces poids pour combiner les valeurs (V).
+4. **Aggregation**: We use these weights to combine the values (V).
 
-5. **Multi-tête** : On répète ce processus avec plusieurs "têtes" en parallèle
-   pour capturer différentes dépendances."""
+5. **Multi-head**: We repeat this process with several "heads" in parallel
+   to capture different dependencies."""
 
-    print("Réponse du modèle:")
+    print("Model response:")
     print("-" * 70)
     print(simulated_response)
     print("-" * 70)
 
-    # Comparaison : sans RAG vs avec RAG
+    # Comparison: without RAG vs with RAG
     print("\n" + "=" * 70)
-    print("COMPARAISON")
+    print("COMPARISON")
     print("=" * 70 + "\n")
 
-    print("❌ SANS RAG:")
-    print("   Le modèle répond UNIQUEMENT de mémoire.")
-    print("   → Risque d'hallucination")
-    print("   → Connaissances figées (pas d'accès aux données récentes)")
-    print("   → Pas de sources à vérifier\n")
+    print("❌ WITHOUT RAG:")
+    print("   The model responds ONLY from memory.")
+    print("   → Risk of hallucination")
+    print("   → Frozen knowledge (no access to recent data)")
+    print("   → No sources to verify\n")
 
-    print("✅ AVEC RAG:")
-    print("   Le modèle reçoit les documents DIRECTEMENT dans le contexte.")
-    print("   → Réponses basées sur des sources verifiables")
-    print("   → Peut accéder à des données externes (fichiers, APIs, BDD)")
-    print("   → Utilisateur peut vérifier les sources citées")
+    print("✅ WITH RAG:")
+    print("   The model receives documents DIRECTLY in the context.")
+    print("   → Answers based on verifiable sources")
+    print("   → Can access external data (files, APIs, databases)")
+    print("   → User can verify cited sources")
 
     print("\n" + "=" * 70)
-    print("NOTES PRATIQUES")
+    print("PRACTICAL NOTES")
     print("=" * 70 + "\n")
 
-    print("• TF-IDF (utilisé ici) est simple mais basique.")
-    print("  → En production, on utilise des embeddings denses")
+    print("• TF-IDF (used here) is simple but basic.")
+    print("  → In production, use dense embeddings")
     print("    (BERT, E5, OpenAI embeddings, etc.)\n")
 
-    print("• Chunking : découper les documents de manière intelligente.")
-    print("  → Chunk trop gros → perte de précision")
-    print("  → Chunk trop petit → fragmentation\n")
+    print("• Chunking: split documents intelligently.")
+    print("  → Chunk too large → loss of precision")
+    print("  → Chunk too small → fragmentation\n")
 
-    print("• Re-ranking : après retrieval, filtrer/classer les résultats.")
-    print("  → Utiliser un modèle spécialisé (CrossEncoder)")
-    print("  → Réduit le 'bruit' injecté au LLM\n")
+    print("• Re-ranking: after retrieval, filter/rank results.")
+    print("  → Use a specialized model (CrossEncoder)")
+    print("  → Reduces 'noise' injected to the LLM\n")
 
-    print("• En-context learning : plus le contexte est long, plus il est")
-    print("  important de bien le structurer et de le prioriser.")
+    print("• In-context learning: the longer the context, the more")
+    print("  important it is to structure and prioritize it well.")
 
 
 if __name__ == "__main__":

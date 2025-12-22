@@ -1,30 +1,30 @@
 """
-Script BONUS 2 : Framework LlamaIndex pour RAG Avancé (Chapitre 13)
+BONUS Script 2: LlamaIndex Framework for Advanced RAG (Chapter 13)
 
-Démontre comment construire un système RAG complet :
-- Chargement et parsing de documents (embarqués dans le script)
-- Indexation et embedding (simulés, déterministes)
-- Retrieval par similarité cosinus
-- Query Engine avec augmentation de contexte
-- Chat avec persistance de contexte (mémoire conversationnelle)
-- Évaluation de qualité (Precision, Recall, F1)
-- Export des résultats en JSON
+Demonstrates how to build a complete RAG system:
+- Document loading and parsing (embedded in the script)
+- Indexing and embedding (simulated, deterministic)
+- Retrieval by cosine similarity
+- Query Engine with context augmentation
+- Chat with context persistence (conversational memory)
+- Quality evaluation (Precision, Recall, F1)
+- Export results to JSON
 
-Mode standalone (aucune dépendance requise):
+Standalone mode (no dependencies required):
     python 07_llamaindex_rag_advanced.py
-    → Utilise des embeddings simulés (déterministes)
+    → Uses simulated embeddings (deterministic)
 
-Mode avancé (avec LlamaIndex réel):
+Advanced mode (with real LlamaIndex):
     pip install llama-index openai python-dotenv
     python 07_llamaindex_rag_advanced.py
-    → Tente l'intégration LlamaIndex si disponible
+    → Attempts LlamaIndex integration if available
 
-Concepts couverts :
+Concepts covered:
     - RAG (Retrieval-Augmented Generation)
-    - Document parsing et indexing
+    - Document parsing and indexing
     - Vector similarity search
-    - Query augmentation avec contexte
-    - Conversation avec mémoire
+    - Query augmentation with context
+    - Conversation with memory
 """
 
 import os
@@ -33,100 +33,100 @@ from datetime import datetime
 import json
 
 # ============================================================================
-# PHASE 0 : Configuration & Imports (avec fallback)
+# PHASE 0: Configuration & Imports (with fallback)
 # ============================================================================
 
 def setup_environment():
-    """Configurer l'environnement avec gestion des dépendances."""
+    """Configure the environment with dependency management."""
     from dotenv import load_dotenv
     load_dotenv()
     
     api_key = os.getenv("OPENAI_API_KEY")
     if not api_key:
-        print("⚠️  OPENAI_API_KEY non configurée")
-        print("   Utilisez: export OPENAI_API_KEY=sk-... (Linux/Mac)")
-        print("   Ou: $env:OPENAI_API_KEY='sk-...' (PowerShell Windows)")
-        print("   Ou mettez-la dans .env")
+        print("⚠️  OPENAI_API_KEY not configured")
+        print("   Use: export OPENAI_API_KEY=sk-... (Linux/Mac)")
+        print("   Or: $env:OPENAI_API_KEY='sk-...' (PowerShell Windows)")
+        print("   Or put it in .env")
     return api_key
 
 
 # ============================================================================
-# PHASE 1 : Données de Document (Embedded)
+# PHASE 1: Document Data (Embedded)
 # ============================================================================
 
 SAMPLE_DOCUMENTS = [
     {
-        "title": "Transformers : Architecture",
+        "title": "Transformers: Architecture",
         "content": """
-Le Transformer est une architecture de réseau profond basée sur le mécanisme 
-d'attention. Contrairement aux RNNs qui traitent les tokens séquentiellement, 
-les Transformers traitent tous les tokens en parallèle.
+The Transformer is a deep network architecture based on the attention mechanism.
+Unlike RNNs that process tokens sequentially, Transformers process all tokens
+in parallel.
 
-Structure principale:
-1. Embedding: Convertit les tokens en vecteurs denses
-2. Positional Encoding: Ajoute l'information de position
-3. Multi-Head Attention: Capture les relations complexes entre tokens
-4. Feed-Forward Networks: Transformations non-linéaires
-5. Layer Normalization: Stabilise l'entraînement
+Main structure:
+1. Embedding: Converts tokens to dense vectors
+2. Positional Encoding: Adds position information
+3. Multi-Head Attention: Captures complex relationships between tokens
+4. Feed-Forward Networks: Non-linear transformations
+5. Layer Normalization: Stabilizes training
 
-Avantage clé: Parallélisation complète → entraînement et inférence plus rapides.
-Complexité: O(n²) en tokens, ce qui limite la longueur des contextes.
+Key advantage: Full parallelization → faster training and inference.
+Complexity: O(n²) in tokens, which limits context length.
 """
     },
     {
-        "title": "Attention Multi-Tête",
+        "title": "Multi-Head Attention",
         "content": """
-L'attention multi-tête permet au modèle d'observer différentes représentations
-d'ordre supérieur du même espace d'entrée-sortie.
+Multi-head attention allows the model to observe different higher-order
+representations of the same input-output space.
 
-Formule:
+Formula:
 Attention(Q, K, V) = softmax(Q·K^T / √d_k)·V
 
-Où:
-- Q (Query): Représentation de la question
-- K (Key): Représentation des clés à interroger
-- V (Value): Valeurs à récupérer
-- d_k: Dimension des clés (scaling)
+Where:
+- Q (Query): Query representation
+- K (Key): Key representation to query
+- V (Value): Values to retrieve
+- d_k: Key dimension (scaling)
 
-Avec 8 têtes (h=8), le modèle capture:
-- Relation syntaxique (dans une tête)
-- Relation sémantique (dans une autre tête)
-- Position (dans une troisième tête)
+With 8 heads (h=8), the model captures:
+- Syntactic relationship (in one head)
+- Semantic relationship (in another head)
+- Position (in a third head)
 - etc.
 
-Avantage: Meilleure représentation qu'une seule tête.
+Advantage: Better representation than a single head.
 """
     },
     {
-        "title": "Fine-tuning et Adaptation",
+        "title": "Fine-tuning and Adaptation",
         "content": """
-Fine-tuning = adapter un modèle pré-entraîné à une tâche spécifique.
+Fine-tuning = adapting a pre-trained model to a specific task.
 
-Stratégies:
-1. Full Fine-tuning: Mettre à jour tous les paramètres (coûteux en mémoire)
-2. LoRA (Low-Rank Adaptation): Ajouter des matrices de petit rang
-   - Paramètres supplémentaires: d·r·2 au lieu de d²
-   - Où d=dimension originale, r=rang
-   - Exemple: 7B model → ~8M params (0.1%)
-3. QLoRA: LoRA sur modèle quantifié (4-bit)
-   - Mémoire: 7B model → ~2GB au lieu de 28GB
-   - Vitesse acceptable pour inférence
+Strategies:
+1. Full Fine-tuning: Update all parameters (memory expensive)
+2. LoRA (Low-Rank Adaptation): Add low-rank matrices
+   - Additional parameters: d·r·2 instead of d²
+   - Where d=original dimension, r=rank
+   - Example: 7B model → ~8M params (0.1%)
+3. QLoRA: LoRA on quantized model (4-bit)
+   - Memory: 7B model → ~2GB instead of 28GB
+   - Acceptable speed for inference
 
 Best practice:
-- Petit dataset (<10K examples): LoRA
-- Medium dataset (10K-100K): LoRA avec learning rate 5e-4
-- Gros dataset (>100K): Full fine-tuning si possible
+- Small dataset (<10K examples): LoRA
+- Medium dataset (10K-100K): LoRA with learning rate 5e-4
+- Large dataset (>100K): Full fine-tuning if possible
 """
     }
 ]
 
 
 # ============================================================================
-# PHASE 2 : Constructeur de Documents (sans dépendances)
+# PHASE 2: Document Builder (no dependencies)
 # ============================================================================
 
 class SimpleDocument:
-    """Document simplifié (fallback si LlamaIndex unavailable)."""
+    """Simplified document (fallback if LlamaIndex unavailable)."""
     
     def __init__(self, content: str, metadata: dict = None):
         self.content = content
@@ -144,34 +144,34 @@ class SimpleDocument:
 
 
 # ============================================================================
-# PHASE 3 : Indexation et Embedding (Simulé + Réel)
+# PHASE 3: Indexing and Embedding (Simulated + Real)
 # ============================================================================
 
 class SimpleEmbedding:
-    """Embedding simulé (fallback)."""
+    """Simulated embedding (fallback)."""
     
     @staticmethod
     def embed_text(text: str, dimensions: int = 384) -> List[float]:
-        """Créer un embedding simple basé sur hash (déterministe)."""
+        """Create a simple hash-based embedding (deterministic)."""
         import hashlib
         
-        # Hash du texte → seed
+        # Hash of text → seed
         hash_val = int(hashlib.md5(text.encode()).hexdigest(), 16)
         
-        # Pseudo-RNG déterministe
+        # Deterministic pseudo-RNG
         import random
         random.seed(hash_val % (2**32))
         
-        # Générer vecteur "plausible" (normal distribution)
+        # Generate "plausible" vector (normal distribution)
         embedding = [random.gauss(0, 1) for _ in range(dimensions)]
         
-        # Normaliser
+        # Normalize
         magnitude = sum(x**2 for x in embedding) ** 0.5
         return [x / magnitude for x in embedding]
 
 
 class VectorIndex:
-    """Index vectoriel simple pour retrieval."""
+    """Simple vector index for retrieval."""
     
     def __init__(self, dimension: int = 384):
         self.vectors: dict = {}  # doc_id -> vector
@@ -179,20 +179,20 @@ class VectorIndex:
         self.dimension = dimension
     
     def add_document(self, doc: SimpleDocument):
-        """Ajouter un document et son embedding."""
+        """Add a document and its embedding."""
         embedding = SimpleEmbedding.embed_text(doc.content, self.dimension)
         self.vectors[doc.id] = embedding
         self.documents[doc.id] = doc
     
     def similarity(self, v1: List[float], v2: List[float]) -> float:
-        """Cosine similarity entre deux vecteurs."""
+        """Cosine similarity between two vectors."""
         dot = sum(a * b for a, b in zip(v1, v2))
         norm1 = sum(x**2 for x in v1) ** 0.5
         norm2 = sum(x**2 for x in v2) ** 0.5
         return dot / (norm1 * norm2) if norm1 > 0 and norm2 > 0 else 0
     
     def retrieve(self, query: str, top_k: int = 3) -> List[SimpleDocument]:
-        """Retriever les k documents les plus similaires."""
+        """Retrieve the k most similar documents."""
         query_vec = SimpleEmbedding.embed_text(query, self.dimension)
         
         scores = [
@@ -200,94 +200,94 @@ class VectorIndex:
             for doc_id, vec in self.vectors.items()
         ]
         
-        # Trier par score décroissant
+        # Sort by descending score
         scores.sort(key=lambda x: x[1], reverse=True)
         
         return [self.documents[doc_id] for doc_id, _ in scores[:top_k]]
 
 
 # ============================================================================
-# PHASE 4 : RAG Engine (Query Processing)
+# PHASE 4: RAG Engine (Query Processing)
 # ============================================================================
 
 class SimpleRAGEngine:
-    """Moteur RAG avec augmentation de contexte."""
+    """RAG engine with context augmentation."""
     
     def __init__(self, index: VectorIndex):
         self.index = index
         self.query_history: List[dict] = []
     
     def _simulate_llm_response(self, prompt: str) -> str:
-        """Simuler une réponse LLM (remplacer par OpenAI API en production)."""
-        # En production: appeler OpenAI, Claude, etc.
-        # Pour la démo: réponse heuristique
+        """Simulate an LLM response (replace with OpenAI API in production)."""
+        # In production: call OpenAI, Claude, etc.
+        # For demo: heuristic response
         
         if "transformer" in prompt.lower():
             return """
-D'après le contexte fourni, les Transformers sont des architectures basées
-sur l'attention qui traitent tous les tokens en parallèle, contrairement aux RNNs.
+According to the provided context, Transformers are attention-based architectures
+that process all tokens in parallel, unlike RNNs.
 
-Les points clés:
-1. Multi-Head Attention: Capture différentes relations (syntaxe, sémantique, position)
-2. Parallélisation: O(n²) en tokens mais traitement plus rapide
-3. Positional Encoding: Ajoute l'information de séquence
+Key points:
+1. Multi-Head Attention: Captures different relationships (syntax, semantics, position)
+2. Parallelization: O(n²) in tokens but faster processing
+3. Positional Encoding: Adds sequence information
 
-L'architecture originale (Vaswani et al., 2017) comprend:
-- Encoder (comprendre le contexte)
-- Decoder (générer la réponse)
-- Attention multi-tête (8 têtes par défaut)
+The original architecture (Vaswani et al., 2017) includes:
+- Encoder (understand context)
+- Decoder (generate response)
+- Multi-head attention (8 heads by default)
 
-Application: Tous les LLMs modernes (GPT, Claude, Llama) utilisent cette architecture.
+Application: All modern LLMs (GPT, Claude, Llama) use this architecture.
 """
         elif "fine" in prompt.lower() or "lora" in prompt.lower():
             return """
-Le fine-tuning adapte un modèle pré-entraîné à une tâche spécifique.
+Fine-tuning adapts a pre-trained model to a specific task.
 
-Stratégies recommandées:
-- LoRA: Ajout de matrices de petit rang (économe en mémoire)
-- QLoRA: LoRA sur modèles quantifiés (4-bit, ~2GB pour 7B model)
-- Full fine-tuning: Si dataset très grand et ressources disponibles
+Recommended strategies:
+- LoRA: Adding low-rank matrices (memory efficient)
+- QLoRA: LoRA on quantized models (4-bit, ~2GB for 7B model)
+- Full fine-tuning: If very large dataset and resources available
 
-Exemple: LoRA sur Llama-2 7B:
-- Paramètres supplémentaires: ~8M (0.1% du modèle)
-- Mémoire nécessaire: ~10GB (vs 28GB en full fine-tuning)
-- Temps: 1-2h sur GPU A100
+Example: LoRA on Llama-2 7B:
+- Additional parameters: ~8M (0.1% of model)
+- Required memory: ~10GB (vs 28GB in full fine-tuning)
+- Time: 1-2h on A100 GPU
 
-Best practice par dataset:
+Best practice by dataset:
 - <10K examples: LoRA
 - 10K-100K: LoRA + lr 5e-4
 - >100K: Full fine-tuning
 """
         else:
-            return "Je ne suis pas certain de la réponse à cette question."
+            return "I am not certain of the answer to this question."
     
     def query(self, question: str, top_k: int = 3) -> dict:
         """
-        Exécuter une requête RAG complète.
+        Execute a complete RAG query.
         
-        Processus:
-        1. Retriever: Chercher les documents pertinents
-        2. Augmenter: Injecter le contexte dans le prompt
-        3. Générer: Appeler le LLM
-        4. Logger: Sauvegarder pour évaluation
+        Process:
+        1. Retrieve: Search for relevant documents
+        2. Augment: Inject context into the prompt
+        3. Generate: Call the LLM
+        4. Log: Save for evaluation
         """
         # 1. Retrieval
         retrieved_docs = self.index.retrieve(question, top_k)
         
-        # 2. Augmentation de contexte
+        # 2. Context augmentation
         context = "\n\n".join([
             f"[{doc.metadata.get('title', 'Untitled')}]\n{doc.content}"
             for doc in retrieved_docs
         ])
         
-        augmented_prompt = f"""Contexte:
+        augmented_prompt = f"""Context:
 {context}
 
 Question: {question}
 
-Réponds en utilisant le contexte fourni. Sois concis et actionnel."""
+Answer using the provided context. Be concise and actionable."""
         
-        # 3. Génération (simulée ou réelle)
+        # 3. Generation (simulated or real)
         answer = self._simulate_llm_response(augmented_prompt)
         
         # 4. Logging
@@ -310,11 +310,11 @@ Réponds en utilisant le contexte fourni. Sois concis et actionnel."""
 
 
 # ============================================================================
-# PHASE 5 : Chat avec Mémoire de Contexte
+# PHASE 5: Chat with Context Memory
 # ============================================================================
 
 class RAGChatbot:
-    """Chatbot avec RAG et mémoire conversationnelle."""
+    """Chatbot with RAG and conversational memory."""
     
     def __init__(self, rag_engine: SimpleRAGEngine, memory_size: int = 5):
         self.rag_engine = rag_engine
@@ -322,9 +322,9 @@ class RAGChatbot:
         self.conversation_history: List[dict] = []
     
     def _build_conversation_context(self) -> str:
-        """Construire le contexte à partir de l'historique."""
+        """Build context from history."""
         if not self.conversation_history:
-            return "Aucun historique."
+            return "No history."
         
         history_text = "\n".join([
             f"Q: {turn['question']}\nA: {turn['answer'][:200]}..."
@@ -333,19 +333,19 @@ class RAGChatbot:
         return history_text
     
     def chat(self, user_message: str) -> dict:
-        """Traiter un message utilisateur avec contexte conversationnel."""
+        """Process a user message with conversational context."""
         
-        # Enrichir la question avec l'historique
+        # Enrich the question with history
         conversation_context = self._build_conversation_context()
-        enriched_question = f"""Historique:
+        enriched_question = f"""History:
 {conversation_context}
 
-Nouvelle question: {user_message}"""
+New question: {user_message}"""
         
-        # Utiliser le RAG engine
+        # Use the RAG engine
         rag_result = self.rag_engine.query(enriched_question)
         
-        # Ajouter à l'historique
+        # Add to history
         self.conversation_history.append({
             "question": user_message,
             "answer": rag_result["answer"],
@@ -361,11 +361,11 @@ Nouvelle question: {user_message}"""
 
 
 # ============================================================================
-# PHASE 6 : Évaluation de Qualité
+# PHASE 6: Quality Evaluation
 # ============================================================================
 
 class RAGEvaluator:
-    """Évaluer la qualité d'un système RAG."""
+    """Evaluate the quality of a RAG system."""
     
     @staticmethod
     def evaluate_retrieval(
@@ -374,12 +374,12 @@ class RAGEvaluator:
         expected_doc_ids: List[str]
     ) -> dict:
         """
-        Évaluer la pertinence du retrieval.
+        Evaluate retrieval relevance.
         
-        Métriques:
-        - Precision@k: % des docs retrievés qui sont pertinents
-        - Recall@k: % des docs pertinents qui ont été retrievés
-        - MRR: Mean Reciprocal Rank (position du 1er bon doc)
+        Metrics:
+        - Precision@k: % of retrieved docs that are relevant
+        - Recall@k: % of relevant docs that were retrieved
+        - MRR: Mean Reciprocal Rank (position of 1st good doc)
         """
         retrieved_ids = [doc.id for doc in retrieved_docs]
         
@@ -413,7 +413,7 @@ class RAGEvaluator:
         reference_answer: str
     ) -> dict:
         """
-        Évaluer la qualité de génération avec BLEU / ROUGE simplifiés.
+        Evaluate generation quality with simplified BLEU / ROUGE.
         """
         gen_tokens = set(generated_answer.lower().split())
         ref_tokens = set(reference_answer.lower().split())
@@ -432,19 +432,19 @@ class RAGEvaluator:
 
 
 # ============================================================================
-# MAIN : Démonstration Complète
+# MAIN: Complete Demonstration
 # ============================================================================
 
 def main():
-    """Exécuter une démonstration complète du RAG avec LlamaIndex."""
+    """Run a complete demonstration of RAG with LlamaIndex."""
     
     print("=" * 80)
     print("🦙 LlamaIndex RAG Advanced Demo")
     print("=" * 80)
     print()
     
-    # 1. Charger les documents
-    print("📚 Phase 1: Chargement des documents")
+    # 1. Load documents
+    print("📚 Phase 1: Loading documents")
     print("-" * 80)
     documents = [
         SimpleDocument(doc["content"], {"title": doc["title"]})
@@ -454,31 +454,31 @@ def main():
         print(f"  ✓ {doc.metadata['title']} ({len(doc.content)} chars)")
     print()
     
-    # 2. Créer l'index
-    print("🔍 Phase 2: Création de l'index vectoriel")
+    # 2. Create the index
+    print("🔍 Phase 2: Creating vector index")
     print("-" * 80)
     index = VectorIndex(dimension=384)
     for doc in documents:
         index.add_document(doc)
-    print(f"  ✓ Index créé avec {len(documents)} documents")
-    print(f"  ✓ Dimension embedding: 384")
+    print(f"  ✓ Index created with {len(documents)} documents")
+    print(f"  ✓ Embedding dimension: 384")
     print()
     
-    # 3. Créer le RAG engine
-    print("⚙️  Phase 3: Initialisation du RAG Engine")
+    # 3. Create the RAG engine
+    print("⚙️  Phase 3: Initializing RAG Engine")
     print("-" * 80)
     rag_engine = SimpleRAGEngine(index)
-    print("  ✓ RAG Engine prêt")
+    print("  ✓ RAG Engine ready")
     print()
     
-    # 4. Exécuter des requêtes
-    print("💬 Phase 4: Requêtes RAG")
+    # 4. Execute queries
+    print("💬 Phase 4: RAG Queries")
     print("-" * 80)
     
     questions = [
-        "Qu'est-ce qu'un Transformer?",
-        "Comment fonctionne l'attention multi-tête?",
-        "Quelle est la différence entre LoRA et fine-tuning complet?"
+        "What is a Transformer?",
+        "How does multi-head attention work?",
+        "What is the difference between LoRA and full fine-tuning?"
     ]
     
     results = []
@@ -487,51 +487,51 @@ def main():
         result = rag_engine.query(question, top_k=2)
         results.append(result)
         
-        print(f"📄 Documents retrievés:")
+        print(f"📄 Retrieved documents:")
         for doc in result["retrieved_docs"]:
             print(f"   - {doc['title']} ({doc['id']})")
         
-        print(f"🤖 Réponse:\n{result['answer'][:300]}...")
+        print(f"🤖 Response:\n{result['answer'][:300]}...")
     
     print()
     
-    # 5. Chat conversationnel
-    print("💬 Phase 5: Chat avec Mémoire")
+    # 5. Conversational chat
+    print("💬 Phase 5: Chat with Memory")
     print("-" * 80)
     
     chatbot = RAGChatbot(rag_engine, memory_size=3)
     
     chat_messages = [
-        "Parle-moi des Transformers",
-        "Et comment ça marche en pratique?",
-        "Peux-tu comparer avec les RNNs?"
+        "Tell me about Transformers",
+        "And how does it work in practice?",
+        "Can you compare with RNNs?"
     ]
     
     for msg in chat_messages:
-        print(f"\n👤 Utilisateur: {msg}")
+        print(f"\n👤 User: {msg}")
         chat_result = chatbot.chat(msg)
         print(f"🤖 Bot: {chat_result['response'][:250]}...")
-        print(f"   📄 Tour {chat_result['turn_number']}")
+        print(f"   📄 Turn {chat_result['turn_number']}")
     
     print()
     
-    # 6. Évaluation
-    print("📊 Phase 6: Évaluation de Qualité")
+    # 6. Evaluation
+    print("📊 Phase 6: Quality Evaluation")
     print("-" * 80)
     
     evaluator = RAGEvaluator()
     
-    # Évaluer le retrieval de la première requête
+    # Evaluate retrieval of first query
     first_result = results[0]
     retrieved_doc_ids = [d["id"] for d in first_result["retrieved_docs"]]
     
-    # Supposer que les docs "pertinents" sont tous ceux contenant "Transformer"
+    # Assume "relevant" docs are all those containing "Transformer"
     expected_docs = [
         d.id for d in documents
         if "transformer" in d.content.lower()
     ]
     
-    # Créer des objets SimpleDocument avec les ID corrects
+    # Create SimpleDocument objects with correct IDs
     retrieved_docs_objects = [
         documents[i] for i, d in enumerate(documents) 
         if d.id in retrieved_doc_ids
@@ -543,29 +543,29 @@ def main():
         expected_docs
     )
     
-    print("Évaluation du Retrieval (Q1):")
+    print("Retrieval Evaluation (Q1):")
     print(f"  - Precision@2: {retrieval_eval['precision']:.2%}")
     print(f"  - Recall@2:    {retrieval_eval['recall']:.2%}")
     print(f"  - F1:          {retrieval_eval['f1']:.2%}")
     
     print()
     
-    # 7. Résumé statistique
-    print("📈 Statistiques Finales")
+    # 7. Statistical summary
+    print("📈 Final Statistics")
     print("-" * 80)
-    print(f"  - Requêtes traitées: {len(results)}")
-    print(f"  - Tours conversationnels: {len(chatbot.conversation_history)}")
-    print(f"  - Documents dans l'index: {len(index.documents)}")
-    print(f"  - Historique de requêtes sauvegardé: {len(rag_engine.query_history)} entrées")
+    print(f"  - Queries processed: {len(results)}")
+    print(f"  - Conversational turns: {len(chatbot.conversation_history)}")
+    print(f"  - Documents in index: {len(index.documents)}")
+    print(f"  - Query history saved: {len(rag_engine.query_history)} entries")
     
     print()
     print("=" * 80)
-    print("✅ Démo complétée!")
+    print("✅ Demo completed!")
     print("=" * 80)
     
-    # 8. Export optionnel
+    # 8. Optional export
     print()
-    print("💾 Exporter les résultats?")
+    print("💾 Export results?")
     export_results = {
         "timestamp": datetime.now().isoformat(),
         "queries": results,
@@ -581,21 +581,21 @@ def main():
     with open(output_file, "w", encoding="utf-8") as f:
         json.dump(export_results, f, indent=2, ensure_ascii=False)
     
-    print(f"✓ Résultats exportés dans: {output_file}")
+    print(f"✓ Results exported to: {output_file}")
 
 
 # ============================================================================
-# Integration avec LlamaIndex (Avancé)
+# Integration with LlamaIndex (Advanced)
 # ============================================================================
 
 def integration_llamaindex_example():
     """
-    Exemple d'intégration avec la vraie librairie LlamaIndex.
-    À exécuter si 'pip install llama-index' est installé.
+    Example integration with the real LlamaIndex library.
+    Run if 'pip install llama-index' is installed.
     """
     
     print("\n" + "=" * 80)
-    print("🦙 Intégration LlamaIndex Réelle")
+    print("🦙 Real LlamaIndex Integration")
     print("=" * 80)
     print()
     
@@ -604,47 +604,47 @@ def integration_llamaindex_example():
         from llama_index.embeddings.openai import OpenAIEmbedding
         from llama_index.llms.openai import OpenAI
         
-        print("✓ LlamaIndex importé avec succès!")
+        print("✓ LlamaIndex imported successfully!")
         print()
         
         # Configuration
         Settings.llm = OpenAI(model="gpt-4")
         Settings.embed_model = OpenAIEmbedding(model="text-embedding-3-small")
         
-        # Charger documents
+        # Load documents
         docs = [
             Document(text=doc["content"], metadata={"title": doc["title"]})
             for doc in SAMPLE_DOCUMENTS
         ]
         
-        # Créer l'index
+        # Create the index
         index = VectorStoreIndex.from_documents(docs)
         
         # Query engine
         query_engine = index.as_query_engine()
         
-        # Requête
-        response = query_engine.query("Qu'est-ce qu'un Transformer?")
-        print(f"Réponse LlamaIndex:\n{response}")
+        # Query
+        response = query_engine.query("What is a Transformer?")
+        print(f"LlamaIndex Response:\n{response}")
         
         print()
-        print("✓ Intégration réelle fonctionnelle!")
+        print("✓ Real integration functional!")
         
     except ImportError:
-        print("⚠️  LlamaIndex non installé")
+        print("⚠️  LlamaIndex not installed")
         print("Installation: pip install llama-index openai")
         print()
-        print("Avec LlamaIndex, vous pouvez:")
-        print("  - Charger différents formats (PDF, Word, HTML, etc.)")
-        print("  - Utiliser des embeddings réels (OpenAI, Ollama, local)")
-        print("  - Exécuter des opérations avancées (table extraction, etc.)")
-        print("  - Persister les index (pour réutilisation)")
+        print("With LlamaIndex, you can:")
+        print("  - Load different formats (PDF, Word, HTML, etc.)")
+        print("  - Use real embeddings (OpenAI, Ollama, local)")
+        print("  - Execute advanced operations (table extraction, etc.)")
+        print("  - Persist indexes (for reuse)")
         print()
 
 
 if __name__ == "__main__":
-    # Exécuter la démo principale
+    # Run the main demo
     main()
     
-    # Essayer l'intégration réelle si disponible
+    # Try real integration if available
     integration_llamaindex_example()
