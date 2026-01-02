@@ -170,4 +170,4 @@ Contributions are welcome! Please see the documentation in your preferred langua
 
 **Happy Learning! 🚀**
 
-*Bon apprentissage ! | ¡Feliz aprendizaje! | Bom aprendizado!*
+*Bon apprentissage ! | ¡Feliz aprendizaje! | Bom aprendizado! | تعلم سعيد!*
