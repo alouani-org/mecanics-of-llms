@@ -1,5 +1,7 @@
 # 🔗 Code ↔ Concept Mapping: Script 09
 
+🌍 **English** | 📖 [Français](../fr/SCRIPT_09_MAPPING.md) | 🇪🇸 [Español](../es/SCRIPT_09_MAPPING.md) | 🇧🇷 [Português](../pt/SCRIPT_09_MAPPING.md) | 🇸🇦 [العربية](../ar/SCRIPT_09_MAPPING.md)
+
 > **Understand which code implements which concept**  
 > Line-by-line learning guide
 

@@ -1,6 +1,6 @@
 # 🤖 Intégration des Agents ReAct
 
-> 🌍 **English** | 📖 **[Version Française](./REACT_AGENT_INTEGRATION.md)**
+🌍 [English](../en/REACT_AGENT_INTEGRATION.md) | 📖 **Français** | 🇪🇸 [Español](../es/REACT_AGENT_INTEGRATION.md) | 🇧🇷 [Português](../pt/REACT_AGENT_INTEGRATION.md) | 🇸🇦 [العربية](../ar/REACT_AGENT_INTEGRATION.md)
 
 ## 📍 Navigation Rapide
 

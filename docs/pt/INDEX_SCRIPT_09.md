@@ -1,5 +1,7 @@
 # 🏗️ Arquitetura: O Mini Assistente Completo (Script 09)
 
+🌍 [English](../en/INDEX_SCRIPT_09.md) | 📖 [Français](../fr/INDEX_SCRIPT_09.md) | 🇪🇸 [Español](../es/INDEX_SCRIPT_09.md) | 🇧🇷 **Português** | 🇸🇦 [العربية](../ar/INDEX_SCRIPT_09.md)
+
 > **Decomposição completa** do projeto integrador  
 > Entendendo a estrutura técnica: camadas, componentes, fluxo
 

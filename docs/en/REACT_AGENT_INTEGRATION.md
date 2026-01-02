@@ -1,5 +1,7 @@
 # 🤖 ReAct Agent Integration Guide
 
+🌍 **English** | 📖 [Français](../fr/REACT_AGENT_INTEGRATION.md) | 🇪🇸 [Español](../es/REACT_AGENT_INTEGRATION.md) | 🇧🇷 [Português](../pt/REACT_AGENT_INTEGRATION.md) | 🇸🇦 [العربية](../ar/REACT_AGENT_INTEGRATION.md)
+
 > **Understanding agents and agentic patterns**  
 > Theory + Implementation
 

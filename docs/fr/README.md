@@ -1,6 +1,6 @@
 # Scripts Pratiques : Expérimenter les Concepts LLM
 
-🌍 [English](../en/README.md) | 📖 **Français** | 🇪🇸 [Español](../es/README.md) | 🇧🇷 [Português](../pt/README.md)
+🌍 [English](../en/README.md) | 📖 **Français** | 🇪🇸 [Español](../es/README.md) | 🇧🇷 [Português](../pt/README.md) | 🇸🇦 [العربية](../ar/README.md)
 
 Collection de **10 scripts Python exécutables** pour expérimenter les concepts clés du livre **"La Mécanique des LLM"**.
 

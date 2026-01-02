@@ -35,8 +35,17 @@ examples/
 │   │   ├── REACT_AGENT_INTEGRATION.md (ReAct pattern guide)
 │   │   └── LLAMAINDEX_GUIDE.md      (RAG framework guide)
 │   │
-│   └── pt/                          ← 🇧🇷 BRAZILIAN PORTUGUESE DOCUMENTATION
-│       ├── README.md                (Portuguese entry point with language switcher)
+│   ├── pt/                          ← 🇧🇷 BRAZILIAN PORTUGUESE DOCUMENTATION
+│   │   ├── README.md                (Portuguese entry point with language switcher)
+│   │   ├── PEDAGOGICAL_JOURNEY.md   (Complete 15-chapter mapping)
+│   │   ├── QUICKSTART_SCRIPT_09.md  (5-minute quick start)
+│   │   ├── SCRIPT_09_MAPPING.md     (Code ↔ Concept mapping)
+│   │   ├── INDEX_SCRIPT_09.md       (Complete index)
+│   │   ├── REACT_AGENT_INTEGRATION.md (ReAct pattern guide)
+│   │   └── LLAMAINDEX_GUIDE.md      (RAG framework guide)
+│   │
+│   └── ar/                          ← 🇸🇦 ARABIC DOCUMENTATION
+│       ├── README.md                (Arabic entry point with language switcher)
 │       ├── PEDAGOGICAL_JOURNEY.md   (Complete 15-chapter mapping)
 │       ├── QUICKSTART_SCRIPT_09.md  (5-minute quick start)
 │       ├── SCRIPT_09_MAPPING.md     (Code ↔ Concept mapping)
@@ -61,25 +70,25 @@ examples/
 
 ## ✅ Documentation Matrix
 
-| Document | 🇫🇷 French | 🇬🇧 English | 🇪🇸 Spanish | 🇧🇷 Portuguese | Purpose |
-|----------|-----------|------------|------------|---------------|---------|
-| README.md | ✅ | ✅ | ✅ | ✅ | Entry point with multilingual switcher |
-| PEDAGOGICAL_JOURNEY.md | ✅ | ✅ | ✅ | ✅ | Maps all 15 chapters to scripts |
-| QUICKSTART_SCRIPT_09.md | ✅ | ✅ | ✅ | ✅ | Run script in 5 minutes |
-| SCRIPT_09_MAPPING.md | ✅ | ✅ | ✅ | ✅ | Code-to-concept mapping |
-| INDEX_SCRIPT_09.md | ✅ | ✅ | ✅ | ✅ | Complete project index |
-| REACT_AGENT_INTEGRATION.md | ✅ | ✅ | ✅ | ✅ | ReAct pattern guide |
-| LLAMAINDEX_GUIDE.md | ✅ | ✅ | ✅ | ✅ | RAG framework guide |
+| Document | 🇫🇷 French | 🇬🇧 English | 🇪🇸 Spanish | 🇧🇷 Portuguese | 🇸🇦 Arabic | Purpose |
+|----------|-----------|------------|------------|---------------|----------|---------|  
+| README.md | ✅ | ✅ | ✅ | ✅ | ✅ | Entry point with multilingual switcher |
+| PEDAGOGICAL_JOURNEY.md | ✅ | ✅ | ✅ | ✅ | ✅ | Maps all 15 chapters to scripts |
+| QUICKSTART_SCRIPT_09.md | ✅ | ✅ | ✅ | ✅ | ✅ | Run script in 5 minutes |
+| SCRIPT_09_MAPPING.md | ✅ | ✅ | ✅ | ✅ | ✅ | Code-to-concept mapping |
+| INDEX_SCRIPT_09.md | ✅ | ✅ | ✅ | ✅ | ✅ | Complete project index |
+| REACT_AGENT_INTEGRATION.md | ✅ | ✅ | ✅ | ✅ | ✅ | ReAct pattern guide |
+| LLAMAINDEX_GUIDE.md | ✅ | ✅ | ✅ | ✅ | ✅ | RAG framework guide |
 
-**Total: 28 documentation files (7 × 4 languages)**
+**Total: 35 documentation files (7 × 5 languages)**
 
 ---
 
 ## 🎯 Key Features
 
 ### ✨ Multilingual Navigation
-- Each documentation file has a 4-language switcher at the top
-- **Navigation format:** `🌍 English | 📖 Français | 🇪🇸 Español | 🇧🇷 Português`
+- Each documentation file has a 5-language switcher at the top
+- **Navigation format:** `🌍 English | 📖 Français | 🇪🇸 Español | 🇧🇷 Português | 🇸🇦 العربية`
 - Users can switch between languages on any page
 - Current language is highlighted (not a link)
 
@@ -90,8 +99,7 @@ examples/
 | 🇫🇷 French | `fr/` | Original book language |
 | 🇬🇧 English | `en/` | International audience |
 | 🇪🇸 Spanish | `es/` | Latin America focus |
-| 🇧🇷 Portuguese | `pt/` | Brazilian focus |
-
+| 🇧🇷 Portuguese | `pt/` | Brazilian focus || 🇸🇦 Arabic | `ar/` | Arabic-speaking audience |
 ### 🔗 Relative Links
 - All links use relative paths compatible with repository root
 - No `/examples/` path references (only file names)

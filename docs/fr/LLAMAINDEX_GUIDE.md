@@ -1,6 +1,6 @@
 # 🧠 Guide Complet RAG (Retrieval-Augmented Generation)
 
-> 🌍 **English** | 📖 **[Version Française](./LLAMAINDEX_GUIDE.md)**
+🌍 [English](../en/LLAMAINDEX_GUIDE.md) | 📖 **Français** | 🇪🇸 [Español](../es/LLAMAINDEX_GUIDE.md) | 🇧🇷 [Português](../pt/LLAMAINDEX_GUIDE.md) | 🇸🇦 [العربية](../ar/LLAMAINDEX_GUIDE.md)
 
 ## 📍 Navigation Rapide
 

@@ -1,5 +1,5 @@
 # 🏗️ Architecture: The Mini Assistant Complete (Script 09)
-
+🌍 **English** | 📖 [Français](../fr/INDEX_SCRIPT_09.md) | 🇪🇸 [Español](../es/INDEX_SCRIPT_09.md) | 🇧🇷 [Português](../pt/INDEX_SCRIPT_09.md) | 🇸🇦 [العربية](../ar/INDEX_SCRIPT_09.md)
 > **Complete breakdown** of the integrator project  
 > Understanding the technical structure: layers, components, flow
 

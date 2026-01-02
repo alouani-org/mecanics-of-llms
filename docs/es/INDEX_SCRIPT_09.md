@@ -1,5 +1,5 @@
 # 🏗️ Arquitectura: El Mini Asistente Completo (Script 09)
-
+🌍 [English](../en/INDEX_SCRIPT_09.md) | 📖 [Français](../fr/INDEX_SCRIPT_09.md) | 🇪🇸 **Español** | 🇧🇷 [Português](../pt/INDEX_SCRIPT_09.md) | 🇸🇦 [العربية](../ar/INDEX_SCRIPT_09.md)
 > **Desglose completo** del proyecto integrador  
 > Entendiendo la estructura técnica: capas, componentes, flujo
 

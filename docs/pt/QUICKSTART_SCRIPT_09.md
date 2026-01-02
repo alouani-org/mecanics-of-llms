@@ -1,5 +1,7 @@
 # ⚡ Início Rápido em 5 Minutos: Script 09
 
+🌍 [English](../en/QUICKSTART_SCRIPT_09.md) | 📖 [Français](../fr/QUICKSTART_SCRIPT_09.md) | 🇪🇸 [Español](../es/QUICKSTART_SCRIPT_09.md) | 🇧🇷 **Português** | 🇸🇦 [العربية](../ar/QUICKSTART_SCRIPT_09.md)
+
 > **Execute em 5 minutos**  
 > Sem teoria. Só código.
 

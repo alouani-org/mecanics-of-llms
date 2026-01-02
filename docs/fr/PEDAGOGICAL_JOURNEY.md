@@ -1,6 +1,6 @@
 # Parcours Pédagogique Complet : Du Chapitre 1 au Script 09
 
-> 🌍 **English** | 📖 **[Version Française](./PEDAGOGICAL_JOURNEY.md)**
+🌍 [English](../en/PEDAGOGICAL_JOURNEY.md) | 📖 **Français** | 🇪🇸 [Español](../es/PEDAGOGICAL_JOURNEY.md) | 🇧🇷 [Português](../pt/PEDAGOGICAL_JOURNEY.md) | 🇸🇦 [العربية](../ar/PEDAGOGICAL_JOURNEY.md)
 
 ## 📚 Vue d'Ensemble
 

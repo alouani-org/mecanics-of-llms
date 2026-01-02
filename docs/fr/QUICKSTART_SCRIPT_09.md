@@ -1,6 +1,6 @@
 # Quick Start : Script 09 - Mini-Assistant Complet
 
-> 🌍 **English** | 📖 **[Version Française](./QUICKSTART_SCRIPT_09.md)**
+🌍 [English](../en/QUICKSTART_SCRIPT_09.md) | 📖 **Français** | 🇪🇸 [Español](../es/QUICKSTART_SCRIPT_09.md) | 🇧🇷 [Português](../pt/QUICKSTART_SCRIPT_09.md) | 🇸🇦 [العربية](../ar/QUICKSTART_SCRIPT_09.md)
 
 ## 🏆 C'est quoi ce script ?
 

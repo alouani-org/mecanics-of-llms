@@ -1,5 +1,5 @@
 # 🔗 Mapeo Código ↔ Concepto: Script 09
-
+🌍 [English](../en/SCRIPT_09_MAPPING.md) | 📖 [Français](../fr/SCRIPT_09_MAPPING.md) | 🇪🇸 **Español** | 🇧🇷 [Português](../pt/SCRIPT_09_MAPPING.md) | 🇸🇦 [العربية](../ar/SCRIPT_09_MAPPING.md)
 > **Entiende qué código implementa qué concepto**  
 > Guía de aprendizaje línea por línea
 

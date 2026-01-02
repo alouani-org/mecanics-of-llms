@@ -1,6 +1,6 @@
 # 📑 Index Complet du Projet Mini-Assistant (Script 09)
 
-> 🌍 **English** | 📖 **[Version Française](./INDEX_SCRIPT_09.md)**
+🌍 [English](../en/INDEX_SCRIPT_09.md) | 📖 **Français** | 🇪🇸 [Español](../es/INDEX_SCRIPT_09.md) | 🇧🇷 [Português](../pt/INDEX_SCRIPT_09.md) | 🇸🇦 [العربية](../ar/INDEX_SCRIPT_09.md)
 
 ## 🎯 Où Commencer ?
 

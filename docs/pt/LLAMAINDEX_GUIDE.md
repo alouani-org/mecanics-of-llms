@@ -1,5 +1,7 @@
 # 📚 Guia LlamaIndex para Iniciantes
 
+🌍 [English](../en/LLAMAINDEX_GUIDE.md) | 📖 [Français](../fr/LLAMAINDEX_GUIDE.md) | 🇪🇸 [Español](../es/LLAMAINDEX_GUIDE.md) | 🇧🇷 **Português** | 🇸🇦 [العربية](../ar/LLAMAINDEX_GUIDE.md)
+
 > **Construindo sistemas RAG com LlamaIndex**  
 > Guia Passo a Passo
 

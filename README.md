@@ -2,7 +2,7 @@
 
 > **🌍 Choose Your Language:**
 > 
-> [🇬🇧 English](#-english) | [🇫🇷 Français](#-français) | [🇪🇸 Español](#-español) | [🇧🇷 Português](#-português)
+> [🇬🇧 English](#-english) | [🇫🇷 Français](#-français) | [🇪🇸 Español](#-español) | [🇧🇷 Português](#-português) | [🇸🇦 العربية](#-العربية)
 
 ---
 
@@ -54,6 +54,18 @@
 
 ---
 
+## 🇸🇦 العربية
+
+**📚 مجموعة السكريبتات العملية** - جرّب المفاهيم الأساسية من كتاب "ميكانيكا نماذج اللغة الكبيرة"
+
+👉 **[الانتقال إلى الوثائق العربية](./docs/ar/README.md)**
+
+**📕 شراء الكتاب:**
+- **نسخة ورقية:** [Amazon](https://amzn.eu/d/3oREERI)
+- **Kindle:** [Amazon](https://amzn.eu/d/b7sG5iw)
+
+---
+
 ## 📋 Quick Overview / Aperçu Rapide / Resumen / Resumo
 
 | Language | Entry Point | Scripts | Documentation |
@@ -62,6 +74,7 @@
 | 🇫🇷 Français | [docs/fr/README.md](./docs/fr/README.md) | 10 scripts | Complète + Guides avancés |
 | 🇪🇸 Español | [docs/es/README.md](./docs/es/README.md) | 10 scripts | Completa + Guías avanzadas |
 | 🇧🇷 Português | [docs/pt/README.md](./docs/pt/README.md) | 10 scripts | Completa + Guias avançados |
+| 🇸🇦 العربية | [docs/ar/README.md](./docs/ar/README.md) | 10 scripts | كاملة + أدلة متقدمة |
 
 ---
 
@@ -84,7 +97,8 @@ mecanics-of-llms/
 │   ├── en/                    ← 🇬🇧 English Documentation (7 files)
 │   ├── fr/                    ← 🇫🇷 Documentation Française (7 fichiers)
 │   ├── es/                    ← 🇪🇸 Documentación en Español (7 archivos)
-│   └── pt/                    ← 🇧🇷 Documentação em Português (7 arquivos)
+│   ├── pt/                    ← 🇧🇷 Documentação em Português (7 arquivos)
+│   └── ar/                    ← 🇸🇦 الوثائق العربية (7 ملفات)
 │
 └── rag_results.json
 ```

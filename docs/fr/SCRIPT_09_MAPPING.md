@@ -1,6 +1,6 @@
 # 🔗 Code ↔ Concept Mapping : Script 09
 
-> 🌍 **English** | 📖 **[Version Française](./SCRIPT_09_MAPPING.md)**
+🌍 [English](../en/SCRIPT_09_MAPPING.md) | 📖 **Français** | 🇪🇸 [Español](../es/SCRIPT_09_MAPPING.md) | 🇧🇷 [Português](../pt/SCRIPT_09_MAPPING.md) | 🇸🇦 [العربية](../ar/SCRIPT_09_MAPPING.md)
 
 ## 📍 Navigation Rapide
 

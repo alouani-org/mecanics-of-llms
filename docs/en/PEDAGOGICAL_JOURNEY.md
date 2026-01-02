@@ -1,5 +1,7 @@
 # 🗺️ Complete Pedagogical Journey: Book → Scripts → Concepts
 
+🌍 **English** | 📖 [Français](../fr/PEDAGOGICAL_JOURNEY.md) | 🇪🇸 [Español](../es/PEDAGOGICAL_JOURNEY.md) | 🇧🇷 [Português](../pt/PEDAGOGICAL_JOURNEY.md) | 🇸🇦 [العربية](../ar/PEDAGOGICAL_JOURNEY.md)
+
 > **Complete Guide** to navigate the "The Mechanics of LLMs" project  
 > Detailed correspondence: book chapters ↔ Python scripts ↔ practical concepts
 

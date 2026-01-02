@@ -1,5 +1,7 @@
 # 🧠 Retrieval-Augmented Generation (RAG) Complete Guide
 
+🌍 **English** | 📖 [Français](../fr/LLAMAINDEX_GUIDE.md) | 🇪🇸 [Español](../es/LLAMAINDEX_GUIDE.md) | 🇧🇷 [Português](../pt/LLAMAINDEX_GUIDE.md) | 🇸🇦 [العربية](../ar/LLAMAINDEX_GUIDE.md)
+
 > **Master RAG: From theory to production**  
 > Everything you need to understand and build RAG systems
 

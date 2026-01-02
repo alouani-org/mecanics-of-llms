@@ -1,5 +1,7 @@
 # 🗺️ Jornada Pedagógica Completa: Livro → Scripts → Conceitos
 
+🌍 [English](../en/PEDAGOGICAL_JOURNEY.md) | 📖 [Français](../fr/PEDAGOGICAL_JOURNEY.md) | 🇪🇸 [Español](../es/PEDAGOGICAL_JOURNEY.md) | 🇧🇷 **Português** | 🇸🇦 [العربية](../ar/PEDAGOGICAL_JOURNEY.md)
+
 > **Guia completo** para navegar o projeto "A Mecânica dos LLMs"  
 > Correspondência detalhada: capítulos do livro ↔ scripts Python ↔ conceitos práticos
 

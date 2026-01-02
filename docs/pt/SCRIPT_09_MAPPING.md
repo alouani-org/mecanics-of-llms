@@ -1,5 +1,7 @@
 # 🔗 Mapeamento Código ↔ Conceito: Script 09
 
+🌍 [English](../en/SCRIPT_09_MAPPING.md) | 📖 [Français](../fr/SCRIPT_09_MAPPING.md) | 🇪🇸 [Español](../es/SCRIPT_09_MAPPING.md) | 🇧🇷 **Português** | 🇸🇦 [العربية](../ar/SCRIPT_09_MAPPING.md)
+
 > **Entenda qual código implementa qual conceito**  
 > Guia de aprendizado linha por linha
 
